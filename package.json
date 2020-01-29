@@ -1,0 +1,22 @@
+{
+  "name": "ravitsemusterapeuttipalvelu",
+  "version": "0.0.1",
+  "description": "Ohjelmistotuotanto 2 kurssin harjoitustyö",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://eta7800-20k-groupA@dev.azure.com/eta7800-20k-groupA/ravitsemusterapeuttipalvelu/_git/ravitsemusterapeuttipalvelu"
+  },
+  "author": "Asikainen, Hyvärinen, Romppanen, Tolonen",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
+  }
+}

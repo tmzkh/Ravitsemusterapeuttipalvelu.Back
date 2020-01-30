@@ -1,0 +1,36 @@
+{
+    "dietician": {
+        "dieticianId":"uuidv4",
+        "name":"string",
+        "education": {
+            "major":"string",
+            "degree":"string",
+            "graduationYear":"int"
+        },
+        "employment": {
+            "industry":"string",
+            "title":"string",
+            "office":"string",
+            "phoneNumber":"string",
+            "email":"string"
+        },
+        "expertise":["string"],
+        "bookings": ["obj:booking"]
+    },
+
+    "customer": {
+        "customerId":"uuidv4",
+        "name":"string",
+        "email": "string",
+        "bookings": ["obj:booking"]
+    },
+
+    "booking": {
+        "dieticianId":"uuidv4",
+        "customerId":"uuidv4",
+        "dateTime":"dateTime",
+        "duration":"int"
+    }
+
+
+}

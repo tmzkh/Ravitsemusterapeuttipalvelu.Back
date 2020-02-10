@@ -8,6 +8,7 @@ module.exports = {
 
     for (let i = 0; i < 30; i++) {
       const customer = {
+        id: faker.random.uuid(),
         name: faker.name.findName(),
         email: faker.internet.email(),
         createdAt: new Date(),

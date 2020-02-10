@@ -7,20 +7,23 @@ module.exports = {
     "password": process.env.DB_PWD,
     "database": process.env.DB_NAME,
     "host": process.env.DB_HOST,
-    "dialect": "mysql"
+    "dialect": "mysql",
+    operatorsAliases: 0,
   },
   "test": {
     "username": process.env.DB_USERNAME,
     "password": process.env.DB_PWD,
     "database": process.env.DB_NAME,
     "host": process.env.DB_HOST,
-    "dialect": "mysql"
+    "dialect": "mysql",
+    operatorsAliases: 0,
   },
   "production": {
     "username": process.env.DB_USERNAME,
     "password": process.env.DB_PWD,
     "database": process.env.DB_NAME,
     "host": process.env.DB_HOST,
-    "dialect": "mysql"
+    "dialect": "mysql",
+    operatorsAliases: 0,
   }
 }

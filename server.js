@@ -10,17 +10,17 @@ require('dotenv').config();
 const PORT = process.env.PORT || 3000;
 const HOSTNAME = process.env.HOST || 'localhost';
 
-const db = require('./config/database')(
-    {
-        dbHost: process.env.DB_HOST, 
-        dbName: process.env.DB_NAME, 
-        username: process.env.DB_USERNAME, 
-        pwd:process.env.DB_PWD
-    });
+// const db = require('./config/database')(
+//     {
+//         dbHost: process.env.DB_HOST, 
+//         dbName: process.env.DB_NAME, 
+//         username: process.env.DB_USERNAME, 
+//         pwd:process.env.DB_PWD
+//     });
 
-db.authenticate()
-    .then(() => console.log('Db connected'))
-    .catch(err => console.log(err))
+// db.authenticate()
+//     .then(() => console.log('Db connected'))
+//     .catch(err => console.log(err))
 
 app.use('/api', apiRoutes);
 

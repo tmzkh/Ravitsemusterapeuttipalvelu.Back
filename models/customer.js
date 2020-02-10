@@ -9,7 +9,7 @@ const db = require('../config/database')(
         pwd:process.env.DB_PWD
     });
 
-const Customer = db.define('customer', {
+const Customer = db.define('customers', {
     id: {
         type: Sequelize.UUID,
         primaryKey: true,

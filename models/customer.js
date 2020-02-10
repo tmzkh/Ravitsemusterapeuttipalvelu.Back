@@ -11,8 +11,9 @@ const db = require('../config/database')(
 
 const Customer = db.define('customer', {
     id: {
-        type: Sequelize.UUIDV4,
-        primaryKey: true
+        type: Sequelize.UUID,
+        primaryKey: true,
+        defaultValue: Sequelize.UUIDV4
     },
     name: {
         type: Sequelize.STRING(50),
@@ -20,8 +21,11 @@ const Customer = db.define('customer', {
     },
     email: {
         type: Sequelize.STRING,
-        allowNull: false
-    }
+        allowNull: false,
+        unique: true
+    },
+    createdAt: Sequelize.DATE,
+    updatedAt: Sequelize.DATE,
 });
 
 module.exports = Customer;

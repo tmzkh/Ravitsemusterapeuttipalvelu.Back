@@ -1,5 +1,7 @@
 // create express app
 const app = require('express')();
+const apiRoutes = require('./routes/api/index');
+
 
 // config dotenv
 require('dotenv').config();
@@ -19,6 +21,8 @@ const db = require('./config/database')(
 db.authenticate()
     .then(() => console.log('Db connected'))
     .catch(err => console.log(err))
+
+app.use('/api', apiRoutes);
 
 app.use('/', (req, res) => {
     res.send("Hello World");

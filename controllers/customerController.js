@@ -7,7 +7,7 @@ module.exports = {
             .then((customers) => {
                 resolve(JSON.stringify(customers));
             }).catch((err) => {
-                console.error(err);
+                //console.error(err);
                 reject(err);
             });
         });
@@ -29,7 +29,7 @@ module.exports = {
                         }
                         
                     }).catch((err) => {
-                        console.error(err);
+                        //console.error(err);
                         reject("Could not find customer by id");
                     });
             } else if (email) {
@@ -44,7 +44,7 @@ module.exports = {
                             email: result.email
                         }));
                     }).catch((err) => {
-                        console.error(err);
+                        //console.error(err);
                         reject("Could not find customer by email");
                     });
             } else {
@@ -64,7 +64,7 @@ module.exports = {
                         email: result.email
                     }));
                 }).catch((err) => {
-                    console.error(err);
+                    //console.error(err);
                     reject(err);
                 });
         });
@@ -78,15 +78,24 @@ module.exports = {
                     email: email
                 }, { where: { id: id } })
                 .then((result) => {
-                    return model.findByPk(id);
+                    if (result == 1) {
+                        return model.findByPk(id);
+                    }
+                    resolve(404);
                 }).then(result => {
-                    resolve(JSON.stringify({
-                        name: result.name,
-                        email: result.email
-                    }));
+                    console.log(result);
+                    if (typeof(result) != 'undefined') {
+                        resolve(JSON.stringify({
+                            id: result.id,
+                            name: result.name,
+                            email: result.email
+                        }));
+                    } else {
+                        resolve(404);
+                    }
                 })
                 .catch((err) => {
-                    console.error(err);
+                    //console.error(err);
                     reject(err);
                 });
         });
@@ -99,7 +108,7 @@ module.exports = {
                 .then((result) => {
                     if (result == 1)
                         resolve();
-                    reject("could not delete");
+                    resolve(404);
                 }).catch((err) => {
                     reject(err);
                 });

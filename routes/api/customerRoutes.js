@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const customerController = require('../../controllers/customerController');
+const authMiddleware = require('../../middlewares/auth');
 
 router.route('/')   
     .get(async (req, res) => {
@@ -9,7 +10,7 @@ router.route('/')
             .then((result) => {
                 res.send(result);
             }).catch((err) => {
-                console.error(err);
+                //console.error(err);
                 let errorObj = {};
                 if (err.errors) {
                     err.errors.forEach(er => {
@@ -29,8 +30,8 @@ router.route('/')
                 .status(201)
                 .send(result);
             }).catch(err => {
-                console.log("asdf");
-                console.error(err);
+                // console.log("asdf");
+                // console.error(err);
                 let errorObj = {};
                 res.setHeader('Content-Type', 'application/json');
                 if (err.name && (err.name === 'SequelizeValidationError' || 
@@ -58,7 +59,7 @@ router.route('/:id', )
                 res.status(200)
                     .send(result);
             }).catch((err) => {
-                console.error(err);
+                //console.error(err);
                 res.status(500)
                     .send();
             });
@@ -72,10 +73,15 @@ router.route('/:id', )
                 name: req.body.name,
                 email: req.body.email
             }).then((result) => {
+                if (result === 404) {
+                    return res.sendStatus(404);
+                }
                 res.status(200)
                     .send(result);
             }).catch((err) => {
-                console.error(err);
+                console.log("tulee routen catchiin");
+                //console.error(err);
+                let errorObj = {};
                 if (err.name && (err.name === 'SequelizeValidationError' || 
                     err.name === 'SequelizeUniqueConstraintError')) {
                     err.errors.forEach(er => {
@@ -94,6 +100,9 @@ router.route('/:id', )
         customerController
             .delete(req.params.id)
             .then((result) => {
+                if (result === 404) {
+                    return res.sendStatus(404);
+                }
                 res.status(204).send("deleted");
             }).catch((err) => {
                 res.status(400).send();
@@ -114,7 +123,5 @@ checkIfIdIsUuid = (req, res) => {
     }
     return true;
 }
-
-
 
 module.exports = router;

@@ -1,4 +1,4 @@
-let assert = require('assert');
+const { assert } = require('chai');
 const customerModel = require('../../models/customer');
 
 let createdCustomer = {};
@@ -12,15 +12,12 @@ describe('Customer model', async () => {
      * test customer creation
      */
     describe('create', () => {
-        it('should create user without errors', (done) => {
-            customerModel.create({
+        it('should create user without errors', () => {
+            return customerModel.create({
                 name: name,
                 email: email
             }).then((result) => {
                 createdCustomer = result;
-                done();
-            }).catch((err) => {
-                done(err);
             });
         });
 
@@ -40,13 +37,10 @@ describe('Customer model', async () => {
      */
     describe('find one', () => {
         let foundCustomer = {};
-        it('should find with id without errors', (done) => {
-            customerModel.findByPk(createdCustomer.id)
+        it('should find with id without errors', () => {
+            return customerModel.findByPk(createdCustomer.id)
             .then((result) => {
                 foundCustomer = result;
-                done();
-            }).catch((err) => {
-                done(err);
             });
         });
 
@@ -62,15 +56,12 @@ describe('Customer model', async () => {
      */
     describe('find all', () => {
         let allCustomers = [];
-        it('should find all without errors', (done) => {
-            customerModel.findAll()
+        it('should find all without errors', () => {
+            return customerModel.findAll()
             .then((result) => {
                 result.forEach(c => {
                     allCustomers.push(c);
                 });
-                done();
-            }).catch((err) => {
-                done(err);
             });
         });
 
@@ -83,25 +74,20 @@ describe('Customer model', async () => {
      * test updating customer
      */
     describe('update', () => {
-        it('should update without errors', (done) => {
-            customerModel.update(
+        it('should update without errors', () => {
+            return customerModel.update(
                 { name: modifiedName }, 
                 { where: { id:createdCustomer.id }}
             ).then((result) => {
-                done();
-            }).catch((err) => {
-                done(err);
+
             });
         });
 
-        it('updated customer should not have same name but other values should be same', (done) => {
-            customerModel.findByPk(createdCustomer.id)
+        it('updated customer should not have same name but other values should be same', () => {
+            return customerModel.findByPk(createdCustomer.id)
             .then((result) => {
                 assert.notEqual(result.name, name);
                 assert.equal(result.email, email);
-                done();
-            }).catch((err) => {
-                done(err);
             });
         });
     });
@@ -110,14 +96,11 @@ describe('Customer model', async () => {
      * test deleting customer
      */
     describe('delete', () => {
-        it('should delete without errors', (done) => {
-            customerModel.destroy({ 
+        it('should delete without errors', () => {
+            return customerModel.destroy({ 
                 where: { id: createdCustomer.id }
             }).then(() => {
-                done();
-            })
-            .catch((err) => {
-                done(err);
+
             });
         });
     });

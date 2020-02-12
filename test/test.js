@@ -6,5 +6,10 @@
  * test customer related stuff
  */
 describe('customer', () => {
-    require('./customerModel/customerModel');
+    require('./customer/customerModelTests');
+    require('./customer/customerControllerTests');
+});
+
+describe('expertise', () => {
+    require('./expertise/expertiseControllerTests');
 });

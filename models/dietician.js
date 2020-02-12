@@ -8,7 +8,7 @@ const db = require('../config/database')({
         pwd:process.env.DB_PWD
     });
 
-const Dietician = db.define('dieticians', {
+const Dietician = db.define('dietician', {
     id: {
         type: Sequelize.UUID,
         primaryKey: true,
@@ -72,6 +72,6 @@ const Dietician = db.define('dieticians', {
     },
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,
-});
+}, {timestamps: true});
 
 module.exports = Dietician;

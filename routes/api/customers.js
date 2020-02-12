@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
                     errorObj[er.path] = er.message;
                 });
             }
-            res.status(500).send({errors: errorObj});
+            res.status(500).send(JSON.stringify({errors: errorObj}));
         });
 });
 
@@ -33,9 +33,9 @@ router.post('/', async (req, res) => {
                 err.errors.forEach(er => {
                     errorObj[er.path] = er.message;
                 });
+                return res.status(400).send(JSON.stringify({errors: errorObj}));
             }
-            res.status(500).send({ errors: errorObj });
-            res.status(400).send("asd");
+            res.status(500).send("asd");
         });
 });
 

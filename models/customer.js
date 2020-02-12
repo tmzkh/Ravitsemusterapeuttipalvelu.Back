@@ -45,6 +45,6 @@ const Customer = db.define('customers', {
     },
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,
-});
+}, {timestamps: true});
 
 module.exports = Customer;

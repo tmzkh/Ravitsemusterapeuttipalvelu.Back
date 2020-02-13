@@ -83,7 +83,6 @@ module.exports = {
                     }
                     resolve(404);
                 }).then(result => {
-                    console.log(result);
                     if (typeof(result) != 'undefined') {
                         resolve(JSON.stringify({
                             id: result.id,

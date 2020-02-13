@@ -48,26 +48,23 @@ const Booking = db.define('booking', {
         type: Sequelize.DATE,
         validate: {
             notNull: {
-                msg: "Start time is required"
+                msg: "Start date is required"
             },
             isDate:{
                 msg: "Invalid date formatting"
             },
         }
     },
-    duration: {
-        type: Sequelize.INTEGER,
+    endsAt: {
+        type: Sequelize.DATE,
         validate: {
             notNull: {
-                msg: "Duration is required"
+                msg: "End date is required"
             },
-            isInt: {
-                msg: "Duration must be integer (minutes)"
+            isDate:{
+                msg: "Invalid date formatting"
             },
-            min: {
-                args: 1,
-                msg: "Duration must be atleast 1 minute"
-            }
+            isAfter: startsAt
         }
     },
     description: {
@@ -77,10 +74,6 @@ const Booking = db.define('booking', {
             notNull: {
                 msg: "Description is required"
             },
-            is: {
-                args: ["^[a-z]+$",'i'],
-                msg: "Name must be string"
-            }
         }
     },
     createdAt: Sequelize.DATE,

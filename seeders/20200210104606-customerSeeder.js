@@ -1,10 +1,14 @@
 'use strict';
 
 const faker = require('faker');
+const knownEntities = require('./helpers/knownEntities');
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
     let customers = [];
+
+    customers.push(knownEntities.cust1);
+    customers.push(knownEntities.cust2);
 
     for (let i = 0; i < 30; i++) {
       const customer = {

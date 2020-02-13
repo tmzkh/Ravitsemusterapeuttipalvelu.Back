@@ -37,7 +37,7 @@ module.exports = {
                         }
                     }).catch((err) => {
                         //console.error(err);
-                        reject("Could not find customers");
+                        reject("Could not find customer");
                     });
             } else {
                 reject("Could not find customer");

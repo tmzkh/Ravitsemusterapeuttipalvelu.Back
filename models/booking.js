@@ -68,7 +68,9 @@ const Booking = db.define('booking', {
             isDate:{
                 msg: "Invalid date formatting"
             },
-            isAfter: this.startsAt
+            isAfter: {
+                args: this.startsAt
+            }
         }
     },
     description: {

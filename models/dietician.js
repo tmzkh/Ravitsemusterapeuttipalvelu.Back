@@ -11,7 +11,7 @@ const db = require('../config/database')({
 const Dietician = db.define('dietician', {
     id: {
         type: Sequelize.UUID,
-        //primaryKey: true,
+        primaryKey: true,
         defaultValue: Sequelize.UUIDV4,
         validate: {
             isUUID: 4,
@@ -19,7 +19,7 @@ const Dietician = db.define('dietician', {
     },
     name: {
         type: Sequelize.STRING,
-        //allowNull: false,
+        allowNull: false,
         validate: {
             notNull: {
                 msg: "Name is required"
@@ -32,7 +32,7 @@ const Dietician = db.define('dietician', {
     },
     education: {
         type: Sequelize.TEXT,
-        //allowNull: false,
+        allowNull: false,
         validate: {
             notNull: {
                 msg: "Education is required"
@@ -41,7 +41,7 @@ const Dietician = db.define('dietician', {
     },
     place: {
         type: Sequelize.STRING,
-        //allowNull: false,
+        allowNull: false,
         validate: {
             notNull: {
                 msg: "Place is required"
@@ -50,8 +50,8 @@ const Dietician = db.define('dietician', {
     },
     email: {
         type: Sequelize.STRING,
-        //allowNull: false,
-        //unique: true,
+        allowNull: false,
+        unique: true,
         validate: {
             notNull: {
                 msg: "Email is required"
@@ -63,7 +63,7 @@ const Dietician = db.define('dietician', {
     },
     phone: {
         type: Sequelize.STRING,
-        //allowNull: false,
+        allowNull: false,
         validate: {
             notNull: {
                 msg: "Phone number is required"

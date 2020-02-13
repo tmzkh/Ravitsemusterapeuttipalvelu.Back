@@ -22,6 +22,7 @@ const Booking = db.define('booking', {
     },
     customerId: {
         type: Sequelize.UUID,
+        allowNull: false,
         validate: {
             notNull: {
                 msg: "Customer id is required"
@@ -34,6 +35,7 @@ const Booking = db.define('booking', {
     },
     dieticianId: {
         type: Sequelize.UUID,
+        allowNull: false,
         validate: {
             notNull: {
                 msg: "Dietician id is required"
@@ -46,6 +48,7 @@ const Booking = db.define('booking', {
     },
     startsAt: {
         type: Sequelize.DATE,
+        allowNull: false,
         validate: {
             notNull: {
                 msg: "Start date is required"
@@ -57,6 +60,7 @@ const Booking = db.define('booking', {
     },
     endsAt: {
         type: Sequelize.DATE,
+        allowNull: false,
         validate: {
             notNull: {
                 msg: "End date is required"
@@ -64,7 +68,7 @@ const Booking = db.define('booking', {
             isDate:{
                 msg: "Invalid date formatting"
             },
-            isAfter: startsAt
+            isAfter: this.startsAt
         }
     },
     description: {
@@ -83,10 +87,10 @@ const Booking = db.define('booking', {
 const Dietician = require('./dietician');
 const Customer = require('./customer');
 
-Booking.hasOne(Dietician);
+Booking.belongsTo(Dietician);
 Dietician.hasMany(Booking);
 
-Booking.hasOne(Customer);
+Booking.belongsTo(Customer);
 Customer.hasMany(Booking);
 
 module.exports = Booking;

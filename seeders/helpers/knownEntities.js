@@ -1,3 +1,7 @@
+
+/**
+ * For testing purposes known dieticians and customers to db
+ */
 module.exports = {
     diet1: {
         id: '9b2a7778-73aa-4841-8a31-f88f6be268bf',

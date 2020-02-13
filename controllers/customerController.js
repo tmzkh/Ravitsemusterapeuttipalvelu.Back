@@ -13,11 +13,19 @@ module.exports = {
         });
     },
     getOne: ({id, name, email}) => {
+
+        let wheres = {};
+        if (id) wheres.id = id;
+        if (name) wheres.name = name;
+        if (email) wheres.email = email;
+
         return new Promise((resolve, reject) => {
-            if (id) {
+            if (id || name || email) {
                 model
-                    .findByPk(id, {attributes: ['id', 'name', 'email']})
-                    .then((result) => {
+                    .findOne({
+                        attributes: ['id', 'name', 'email'],
+                        where: wheres
+                    }).then((result) => {
                         if (!result) {
                             resolve(404);
                         } else {
@@ -27,25 +35,9 @@ module.exports = {
                                 email: result.email
                             }));
                         }
-                        
                     }).catch((err) => {
                         //console.error(err);
-                        reject("Could not find customer by id");
-                    });
-            } else if (email) {
-                model
-                    .findOne({
-                        attributes: ['id', 'name', 'email'], 
-                        where: {email: email}})
-                    .then((result) => {
-                        resolve(JSON.stringify({
-                            id: result.id,
-                            name: result.name,
-                            email: result.email
-                        }));
-                    }).catch((err) => {
-                        //console.error(err);
-                        reject("Could not find customer by email");
+                        reject("Could not find customers");
                     });
             } else {
                 reject("Could not find customer");

@@ -64,7 +64,7 @@ module.exports = {
     },
 
     create: (newBooking) => {
-        console.log(newBooking);
+        //console.log(newBooking);
         return new Promise((resolve, reject) => {
             return model.create({
                 customerId: newBooking.customerId,
@@ -72,11 +72,9 @@ module.exports = {
                 startsAt: new Date(newBooking.startsAt),
                 endsAt: new Date(newBooking.endsAt),
                 description: newBooking.description,
-            })
-            .then((result) => {
+            }).then((result) => {
                 resolve(JSON.stringify(result));
             }).catch((err) => {
-                console.log(err);
                 reject(err);
             });
         });

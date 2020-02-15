@@ -78,6 +78,9 @@ const Dietician = db.define('dietician', {
             }
         }
     },
+    isPengind: {
+        type: Sequelize.BOOLEAN
+    },
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,
 }, {timestamps: true});

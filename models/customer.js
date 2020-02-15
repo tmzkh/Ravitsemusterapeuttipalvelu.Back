@@ -25,7 +25,7 @@ const Customer = db.define('customers', {
                 msg: "Name is required"
             },
             is: {
-                args: ["^[a-z]+$",'i'],
+                args: ["^([a-z]|å|ä|ö)+$",'i'],
                 msg: "Name must be string"
             }
         }

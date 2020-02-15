@@ -8,6 +8,8 @@ const db = require('../config/database')({
         pwd:process.env.DB_PWD
     });
 
+const moment = require('moment');
+
 const Booking = db.define('booking', {
     id: {
         type: Sequelize.UUID,
@@ -68,9 +70,6 @@ const Booking = db.define('booking', {
             isDate:{
                 msg: "Invalid date formatting"
             },
-            isAfter: {
-                args: this.startsAt
-            }
         }
     },
     description: {
@@ -84,7 +83,16 @@ const Booking = db.define('booking', {
     },
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,
-}, {timestamps: true});
+}, {
+    timestamps: true,
+    validate: {
+        startDateAfterEndDate() {
+          if (moment(this.endsAt).isSameOrBefore(this.startsAt)) {
+            throw new Error('EndsAt must be after StartsAt');
+          }
+        }
+      }
+});
 
 const Dietician = require('./dietician');
 const Customer = require('./customer');

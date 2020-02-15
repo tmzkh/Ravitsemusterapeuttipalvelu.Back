@@ -26,12 +26,20 @@ router.route('/')
         res.setHeader('Content-Type', 'application/json');
         try {
             //console.log(req.body);
-            const result = bookingController.create(req.body);
+            const result = await bookingController.create(req.body);
             res.status(201).send(result);
         } catch (err) {
-            //console.log(err);
-            res.send(JSON.stringify(err));
-        }
+            if (err.name && (err.name === 'SequelizeValidationError' || 
+                err.name === 'SequelizeUniqueConstraintError')) {
+                let errorObj = {};
+                err.errors.forEach(er => {
+                    errorObj[er.path] = er.message;
+                });
+                return res.status(400)
+                        .send(JSON.stringify({errors: errorObj}));
+            }
+            res.sendStatus(500);
+    }
     });
 
 router.route('/:id')

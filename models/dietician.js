@@ -8,7 +8,7 @@ const db = require('../config/database')({
         pwd:process.env.DB_PWD
     });
 
-const Dietician = db.define('dietician', {
+const Dietician = db.define('dieticians', {
     id: {
         type: Sequelize.UUID,
         primaryKey: true,
@@ -25,7 +25,7 @@ const Dietician = db.define('dietician', {
                 msg: "Name is required"
             },
             is: {
-                args: ["^[a-z]+$",'i'],
+                args: ["^([a-z]|å|ä|ö)+$",'i'],
                 msg: "Name must be string"
             }
         }
@@ -78,8 +78,9 @@ const Dietician = db.define('dietician', {
             }
         }
     },
-    isPengind: {
-        type: Sequelize.BOOLEAN
+    isPending: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
     },
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,

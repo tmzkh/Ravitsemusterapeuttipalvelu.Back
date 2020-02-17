@@ -13,3 +13,8 @@ describe('customer', () => {
 describe('expertise', () => {
     require('./expertise/expertiseControllerTests');
 });
+
+describe('dietician', () => {
+    require('./dietician/dieticianModelTests');
+    require('./dietician/dieticianControllerTests');
+});

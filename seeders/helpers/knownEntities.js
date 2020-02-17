@@ -11,6 +11,7 @@ module.exports = {
         email: 'tera@email.com',
         phone: "12304595",
         imageUrl: null,
+        isPending: false,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -22,6 +23,7 @@ module.exports = {
         email: 'peutti@email.com',
         phone: "165498132",
         imageUrl: null,
+        isPending: true,
         createdAt: new Date(),
         updatedAt: new Date()
     },

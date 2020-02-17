@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "test": "mocha"
+    "test": "mocha",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,10 @@
     "mocha": "^7.0.1",
     "moment": "^2.24.0",
     "mysql2": "^2.1.0",
-    "sequelize": "^5.21.3",
+    "sequelize": "^5.21.4",
     "sequelize-cli": "^5.5.1"
+  },
+  "directories": {
+    "test": "test"
   }
 }

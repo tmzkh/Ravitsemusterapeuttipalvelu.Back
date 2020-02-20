@@ -16,7 +16,9 @@ module.exports = ({ dbHost, dbName, username, pwd }) => {
                 idle: 10000
             },
             define: {
-                timestamps:false
+                timestamps:false,
+                charset: 'utf8',
+                collate: 'utf8_general_ci'
             }
         },
     );

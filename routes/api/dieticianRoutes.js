@@ -5,7 +5,8 @@ const authMiddleware = require('../../middlewares/auth');
 router.route('/')   
     .get(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
-        dieticianController
+        if (!req.body.searchparams) {
+            dieticianController
             .getAll()
             .then((result) => {
                 res.send(result);
@@ -20,6 +21,27 @@ router.route('/')
                 res.status(500)
                     .send(JSON.stringify({errors: errorObj}));
             });
+        } else {
+            const searchquery = 
+                req.body.searchparams.query != null
+                ? req.body.searchparams.query
+                : "";
+
+            const expertiseIds = 
+                req.body.searchparams.expertises
+                ? req.body.searchparams.expertises
+                : [];
+
+            dieticianController
+                .getFiltered({
+                    query: searchquery,
+                    expertiseIds: expertiseIds
+                }).then((result) => {
+                    res.send(result);
+                }).catch((err) => {
+                    res.send(JSON.stringify(err));
+                });
+        }
     })
     .post(async (req, res) => {
         dieticianController
@@ -31,9 +53,6 @@ router.route('/')
                 .status(201)
                 .send(result);
             }).catch(err => {
-                // console.log("asdf");
-                // console.error(err);
-                console.log(req.body);
                 let errorObj = {};
                 res.setHeader('Content-Type', 'application/json');
                 if (err.name && (err.name === 'SequelizeValidationError' || 

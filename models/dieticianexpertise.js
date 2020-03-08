@@ -11,7 +11,7 @@ const db = require('../config/database')({
         pwd:process.env.DB_PWD
     });
 
-const DieticianExpertese = db.define('dietician_expertise', 
+const DieticianExpertise = db.define('dietician_expertise', 
     { 
         // dieticianId: {
         // type: Sequelize.UUID,
@@ -34,5 +34,5 @@ const DieticianExpertese = db.define('dietician_expertise',
 Dietician.belongsToMany(Expertise, {through: 'dietician_expertise'});
 Expertise.belongsToMany(Dietician, {through: 'dietician_expertise'});
 
-module.exports = DieticianExpertese;
+module.exports = DieticianExpertise;
 

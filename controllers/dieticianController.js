@@ -1,4 +1,10 @@
 const model = require('../models/dietician');
+const expertiseModel = require('../models/expertise');
+require('../models/dieticianexpertise');
+
+const Sequelize = require('sequelize');
+
+const Op = Sequelize.Op
 
 module.exports = {
     getAll: () => {
@@ -12,6 +18,64 @@ module.exports = {
                     reject(err);
                 });
         });
+    },
+    getFiltered: ({ query, expertiseIds }) => {
+        let expertiseWheres = {};
+
+        if (expertiseIds && expertiseIds.length > 0) {
+            let idWheres = [];
+            expertiseIds.forEach(id => {
+                idWheres.push({id: parseInt(id)});
+            });
+            expertiseWheres = {[Op.or]: idWheres};
+        }
+        return new Promise((resolve, reject) => {
+            let dieticianIds = [];
+            // first we must find dietician id:s
+            return model.findAll(
+                {
+                    where: {
+                        [Op.or]: {
+                            'name': {
+                                [Op.like]: `%${query}%` 
+                            },
+                            'place': {
+                                [Op.like]: `%${query}%` 
+                            }
+                        },
+                    },
+                    include: {
+                        model: expertiseModel,
+                        where: expertiseWheres,
+                        required: true
+                    },
+                }
+            ).each((dietician) => {
+                dieticianIds.push(dietician.id);
+            }).then(() => {
+                // then we can include every expertise
+                return model.findAll(
+                    {
+                        where: {
+                            id: dieticianIds
+                        },
+                        include: {
+                            model: expertiseModel,
+                            attributes: ['id'],
+                            through: {
+                                attributes: []
+                            }
+                        },
+                    })
+            })
+            .then((result) => {
+                resolve(JSON.stringify(result));
+            }).catch((err) => {
+                console.log(err);
+                reject(err);
+            });
+        });
+
     },
     getOne: ({ id, name, email }) => {
         let wheres = {};

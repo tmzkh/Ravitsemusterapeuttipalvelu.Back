@@ -25,7 +25,7 @@ module.exports = {
         if (expertiseIds && expertiseIds.length > 0) {
             let idWheres = [];
             expertiseIds.forEach(id => {
-                idWheres.push({id: parseInt(id)});
+                idWheres.push({id: id});
             });
             expertiseWheres = {[Op.or]: idWheres};
         }

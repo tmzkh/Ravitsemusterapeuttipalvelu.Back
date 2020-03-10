@@ -25,7 +25,7 @@ const Dietician = db.define('dieticians', {
                 msg: "Name is required"
             },
             is: {
-                args: ["^([a-z]|å|ä|ö)+$",'i'],
+                args: ["^([a-z]|å|ä|ö| )+$",'i'],
                 msg: "Name must be string"
             }
         }

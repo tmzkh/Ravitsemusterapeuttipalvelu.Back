@@ -1,11 +1,12 @@
 const router = require('express').Router();
 const dieticianController = require('../../controllers/dieticianController');
 const authMiddleware = require('../../middlewares/auth');
+const getDieticiansQueryParser = require('../../helpers/getDieticiansQueryParser');
 
 router.route('/')   
     .get(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
-        if (!req.body.searchparams) {
+        if (!req.query) {
             dieticianController
             .getAll()
             .then((result) => {
@@ -22,19 +23,15 @@ router.route('/')
                     .send(JSON.stringify({errors: errorObj}));
             });
         } else {
-            const searchquery = 
-                req.body.searchparams.query != null
-                ? req.body.searchparams.query
-                : "";
+            const { error, searchQuery, expertiseIds } = getDieticiansQueryParser(req.query);
 
-            const expertiseIds = 
-                req.body.searchparams.expertises
-                ? req.body.searchparams.expertises
-                : [];
+            if (error)
+                return res.status(400)
+                    .send(JSON.stringify({errors: { error }}));
 
             dieticianController
                 .getFiltered({
-                    query: searchquery,
+                    query: searchQuery,
                     expertiseIds: expertiseIds
                 }).then((result) => {
                     res.send(result);

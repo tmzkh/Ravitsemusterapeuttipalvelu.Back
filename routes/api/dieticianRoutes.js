@@ -6,7 +6,7 @@ const getDieticiansQueryParser = require('../../helpers/getDieticiansQueryParser
 router.route('/')   
     .get(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
-        if (!req.query) {
+        if (! req.query.expertises && ! req.query.query) {
             dieticianController
             .getAll()
             .then((result) => {

@@ -9,14 +9,25 @@ const Op = Sequelize.Op
 module.exports = {
     getAll: () => {
         return new Promise((resolve, reject) => {
-            model.findAll({ attributes: ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'] })
-                .then((dietician) => {
-                    console.log()
-                    resolve(JSON.stringify(dietician));
-                }).catch((err) => {
-                    //console.error(err);
-                    reject(err);
-                });
+            model.findAll({
+                where: { isPending: false },
+                attributes: ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'],
+                include: {
+                    model: expertiseModel,
+                    attributes: ['id'],
+                    through: {
+                        attributes: []
+                    },
+                    required: false
+                },
+            })
+            .then((dietician) => {
+                console.log()
+                resolve(JSON.stringify(dietician));
+            }).catch((err) => {
+                //console.error(err);
+                reject(err);
+            });
         });
     },
     getFiltered: ({ query, expertiseIds }) => {
@@ -32,30 +43,27 @@ module.exports = {
         return new Promise((resolve, reject) => {
             let dieticianIds = [];
             // first we must find dietician id:s
-            return model.findAll(
-                {
-                    where: {
-                        [Op.or]: {
-                            'name': {
-                                [Op.like]: `%${query}%` 
-                            },
-                            'place': {
-                                [Op.like]: `%${query}%` 
-                            }
+            return model.findAll({
+                where: {
+                    [Op.or]: {
+                        'name': {
+                            [Op.like]: `%${query}%` 
                         },
+                        'place': {
+                            [Op.like]: `%${query}%` 
+                        }
                     },
-                    include: {
-                        model: expertiseModel,
-                        where: expertiseWheres,
-                        required: true
-                    },
-                }
-            ).each((dietician) => {
+                },
+                include: {
+                    model: expertiseModel,
+                    where: expertiseWheres,
+                    required: true
+                },
+            }).each((dietician) => {
                 dieticianIds.push(dietician.id);
             }).then(() => {
                 // then we can include every expertise
-                return model.findAll(
-                    {
+                return model.findAll({
                         where: {
                             id: dieticianIds
                         },
@@ -67,8 +75,7 @@ module.exports = {
                             }
                         },
                     })
-            })
-            .then((result) => {
+            }).then((result) => {
                 resolve(JSON.stringify(result));
             }).catch((err) => {
                 console.log(err);
@@ -86,7 +93,14 @@ module.exports = {
             if (id || name || email) {
                 model
                     .findOne({
-                        attributes: ['id', 'name', 'email'],
+                        attributes: ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'],
+                        include: {
+                            model: expertiseModel,
+                            attributes: ['id'],
+                            through: {
+                                attributes: []
+                            }
+                        },
                         where: wheres
                     }).then((result) => {
                         if (!result) {
@@ -114,11 +128,7 @@ module.exports = {
             model
                 .create({ name: name, education: education, place: place, email: email, phone: phone, imageUrl: imageUrl })
                 .then((result) => {
-                    resolve(JSON.stringify({
-                        id: result.id,
-                        name: result.name,
-                        email: result.email
-                    }));
+                    resolve(JSON.stringify(result));
                 }).catch((err) => {
                     //console.error(err);
                     reject(err);
@@ -139,16 +149,23 @@ module.exports = {
                 }, { where: { id: id } })
                 .then((result) => {
                     if (result == 1) {
-                        return model.findByPk(id);
+                        return model
+                            .findOne({
+                                attributes: ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'],
+                                include: {
+                                    model: expertiseModel,
+                                    attributes: ['id'],
+                                    through: {
+                                        attributes: []
+                                    }
+                                },
+                                where: { id: id }
+                            })
                     }
                     resolve(404);
                 }).then(result => {
                     if (typeof (result) != 'undefined') {
-                        resolve(JSON.stringify({
-                            id: result.id,
-                            name: result.name,
-                            email: result.email
-                        }));
+                        resolve(JSON.stringify(result));
                     } else {
                         resolve(404);
                     }

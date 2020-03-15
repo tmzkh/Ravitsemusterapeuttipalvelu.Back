@@ -1,5 +1,5 @@
-'use strict';
 const Sequelize = require('sequelize');
+// config dotenv
 require('dotenv').config();
 const db = require('../config/database')({
         dbHost: process.env.DB_HOST, 
@@ -8,14 +8,14 @@ const db = require('../config/database')({
         pwd:process.env.DB_PWD
     });
 
-const Expertise = db.define('expertise', {
-  id: {
-    type:Sequelize.INTEGER,
-    primaryKey:true
-  },
-  name: {
-    type:Sequelize.STRING
-  }
+const Role = db.define('role', {
+    id: {
+        type:Sequelize.INTEGER,
+        primaryKey:true
+    },
+    name: {
+        type:Sequelize.STRING
+    }
 }, { timestamps:false });
 
-module.exports = Expertise;
+module.exports = Role;

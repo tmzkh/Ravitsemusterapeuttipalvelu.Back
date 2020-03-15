@@ -13,22 +13,7 @@ const db = require('../config/database')({
 
 const DieticianExpertise = db.define('dietician_expertise', 
     { 
-        // dieticianId: {
-        // type: Sequelize.UUID,
-        // primaryKey: true,
-        // references: {
-        //     model: Dietician,
-        //     key:'id'
-        //   }
-        // },
-        // experteseId: {
-        // type: Sequelize.INTEGER,
-        // primaryKey: true,
-        // references: {
-        //     model: Expertise,
-        //     key:'id'
-        //   }
-        // },
+
     }, { timestamps: false });
 
 Dietician.belongsToMany(Expertise, {through: 'dietician_expertise'});

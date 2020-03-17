@@ -3,29 +3,35 @@ const model = require('../models/booking');
 const Dietician = require('../models/dietician');
 const Customer = require('../models/customer');
 
-generateIncludes = (includeDietician, includeCustomer) => {
+const Op = require('sequelize').Op;
+
+generateIncludes = (includeCustomer) => {
     let includes = [];
-    if (includeDietician) includes.push({
-        model: Dietician,
-        attributes: ['id', 'name', 'education', 'place', 'email', 'phone']
-    });
     if (includeCustomer) includes.push({
         model: Customer, 
-        attributes: ['id', 'name', 'email']
+        attributes: ['id'],
     });
     return includes;
 }
 
 module.exports = {
-    get: ({dieticianId, customerId, includeDietician, includeCustomer, includeDescription}) => {
-        const includes = generateIncludes(includeDietician, includeCustomer);
-
-        let wheres = {};
+    get: ({dieticianId, customerId, startDate, endDate, includeCustomer, includeDescription}) => {
+        const includes = generateIncludes(includeCustomer);
+        let wheres = {
+            [Op.and]: {
+                startsAt: {
+                    [Op.lt]: endDate
+                },
+                endsAt: {
+                    [Op.gt]: startDate
+                }
+            }
+        };
         if (dieticianId) wheres.dieticianId = dieticianId;
         if (customerId) wheres.customerId = customerId;
 
         return new Promise((resolve, reject) => {
-            if (!dieticianId && !customerId) {
+            if (! dieticianId && ! customerId) {
                 reject(400);
             } else {
                 let attributes = ['id', 'startsAt', 'endsAt'];
@@ -35,7 +41,7 @@ module.exports = {
                     include: includes,
                     where: wheres
                 }).then((result) => {
-                    resolve(JSON.stringify(result));
+                    resolve(result);
                 }).catch((err) => {
                     reject(err);
                 });
@@ -78,15 +84,5 @@ module.exports = {
                 reject(err);
             });
         });
-
-        // model.create({
-        //     customerId: knownEntities.cust1.id,
-        //     dieticianId: knownEntities.diet1.id,
-        //     startsAt: new Date("2020-03-01T12:00:00.000Z"),
-        //     endsAt: new Date("2020-03-01T12:15:00.000Z"),
-        //     description: "Vegaanin ruokavalio",
-        //     createdAt: new Date(),
-        //     updatedAt: new Date()
-        //   });
     }
 };

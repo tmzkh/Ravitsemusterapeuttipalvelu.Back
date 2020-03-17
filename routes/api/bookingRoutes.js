@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const bookingController = require('../../controllers/bookingController');
 const knownEntities = require('../../seeders/helpers/knownEntities');
+const validateRequest = require('../../helpers/validateBookingQuery');
 
 /**
  * GET /api/bookings
@@ -8,18 +9,25 @@ const knownEntities = require('../../seeders/helpers/knownEntities');
 router.route('/')
     .get(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
-        try {
-            const result = await bookingController.get({
-                dieticianId: knownEntities.diet1.id,
-                customerId: knownEntities.cust1.id,
-                includeCustomer: true,
-                includeDietician: true,
-                includeDescription: true
-            });
-            res.send(result);
-        } catch (err) {
-            res.send(JSON.stringify(err));
+        const { errors, isValid } = validateRequest(req.query);
+        if (isValid) {
+            try {
+                const result = await bookingController.get({
+                    dieticianId: req.query.dieticianId,
+                    customerId: req.query.customerId,
+                    startDate: req.query.startDate, 
+                    endDate: req.query.endDate,
+                    includeCustomer: true,
+                    includeDescription: true
+                });
+                res.send(JSON.stringify(result));
+            } catch (err) {
+                res.send(JSON.stringify(err));
+            }
+        } else {
+            res.status(400).send({errors: errors});
         }
+
     })
     .post(async (req, res) => {
 

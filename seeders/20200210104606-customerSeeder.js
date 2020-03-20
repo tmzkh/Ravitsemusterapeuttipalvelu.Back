@@ -9,6 +9,8 @@ module.exports = {
 
     customers.push(knownEntities.cust1);
     customers.push(knownEntities.cust2);
+    customers.push(knownEntities.cust3);
+    customers.push(knownEntities.cust4);
 
     for (let i = 0; i < 30; i++) {
       const customer = {

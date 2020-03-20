@@ -9,6 +9,8 @@ module.exports = {
 
     dieticians.push(knownEntities.diet1);
     dieticians.push(knownEntities.diet2);
+    dieticians.push(knownEntities.diet3);
+    dieticians.push(knownEntities.diet4);
 
     for (let i = 0; i < 30; i++) {
       const dietician = {

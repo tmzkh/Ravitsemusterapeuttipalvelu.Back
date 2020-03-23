@@ -8,7 +8,7 @@ const dieticianController = require('../../controllers/dieticianController');
 
 let createdDietician = {};
 const name = "Tero";
-const modifiedName = "Turo";
+const modifiedName = "Mikko";
 const education = "Koulu";
 const place = "Kuopio";
 const email = "tero@mail.com";

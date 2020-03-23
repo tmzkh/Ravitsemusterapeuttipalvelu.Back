@@ -18,3 +18,8 @@ describe('dietician', () => {
     require('./dietician/dieticianModelTests');
     require('./dietician/dieticianControllerTests');
 });
+
+describe('booking', () => {
+    require('./booking/bookingModelTests');
+    require('./booking/bookingControllerTests');
+});

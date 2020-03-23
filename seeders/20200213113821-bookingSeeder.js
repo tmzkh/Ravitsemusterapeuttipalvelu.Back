@@ -40,6 +40,16 @@ module.exports = {
       }
       bookings.push(booking);
     }
+    bookings.push({
+      id: faker.random.uuid(),
+      customerId: knownEntities.cust1.id,
+      dieticianId: knownEntities.diet1.id,
+      startsAt: new Date("2020-03-01T12:00:00.000Z"),
+      endsAt: new Date("2020-03-01T12:15:00.000Z"),
+      description: "Vegaanin ruokavalio",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
     /*let bookings = [];
     bookings.push({
       id: faker.random.uuid(),

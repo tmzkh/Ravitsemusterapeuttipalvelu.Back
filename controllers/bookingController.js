@@ -68,21 +68,49 @@ module.exports = {
             }
         });
     },
-
+    
     create: (newBooking) => {
         //console.log(newBooking);
         return new Promise((resolve, reject) => {
             return model.create({
                 customerId: newBooking.customerId,
                 dieticianId: newBooking.dieticianId,
-                startsAt: new Date(newBooking.startsAt),
-                endsAt: new Date(newBooking.endsAt),
+                startsAt: newBooking.startsAt,
+                endsAt: newBooking.endsAt,
                 description: newBooking.description,
             }).then((result) => {
                 resolve(JSON.stringify(result));
             }).catch((err) => {
                 reject(err);
             });
+        });
+    },
+
+    update: (updatedBooking) => {
+        //console.log(newBooking);
+        return new Promise((resolve, reject) => {
+            return model.update({
+                startsAt: updatedBooking.startsAt,
+                endsAt: updatedBooking.endsAt,
+            }, {where: {id: updatedBooking.id}}).then((result) => {
+                resolve(JSON.stringify(result));
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    },
+
+    delete: (id) => {
+        return new Promise((resolve, reject) => {
+            model
+                .destroy({ where: { id: id } })
+                .then((result) => {
+                    if (result == 1)
+                        resolve();
+                    resolve(404);
+                }).catch((err) => {
+                    reject(err);
+                });
         });
     }
 };

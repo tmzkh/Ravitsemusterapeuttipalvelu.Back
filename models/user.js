@@ -1,6 +1,8 @@
 const Sequelize = require('sequelize');
 
+const Dietician = require('./dietician');
 const Role = require('./role');
+
 
 // config dotenv
 require('dotenv').config();
@@ -51,10 +53,19 @@ const User = db.define('user', {
             },
         }
     },
+    dieticianId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        isUUID: {
+            args: 4,
+            msg: "Id must be in UUID4 fromat"
+        }
+    },
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,
 }, {timestamps: true});
 
 User.hasOne(Role, {foreignKey: 'roleId'});
+User.belongsTo(Dietician, {foreignKey: 'dieticianId'});
 
 module.exports = User;

@@ -17,6 +17,23 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      dieticianId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        unique: true,
+        references: {
+          model: 'dieticians',
+          key:'id'
+        },
+      },
+      roleId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'roles',
+          key:'id'
+        },
+      },
       createdAt: Sequelize.DATE,
       updatedAt: Sequelize.DATE,
     });

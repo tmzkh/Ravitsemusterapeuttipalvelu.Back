@@ -11,24 +11,21 @@ module.exports = {
           validate: {
               isUUID: 4,
           }
-      },
-      userId: {
-          type: Sequelize.UUID,
-          allowNull: false,
-          references: {
-            model: 'user',
-            key:'id'
-          }
-      },
-      accessToken: {
-          type: Sequelize.STRING,
-          allowNull: false,
-      },
-      role: {
-          type: Sequelize.STRING,
-      },
-      createdAt: Sequelize.DATE,
-      updatedAt: Sequelize.DATE,
+        },
+        userId: {
+            type: Sequelize.UUID,
+            allowNull: false,
+            references: {
+              model: 'users',
+              key:'id'
+            }
+        },
+        accessToken: {
+            type: Sequelize.STRING,
+            allowNull: false,
+        },
+        createdAt: Sequelize.DATE,
+        updatedAt: Sequelize.DATE,
       });
   },
 

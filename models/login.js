@@ -28,9 +28,6 @@ const Login = db.define('logins', {
         type: Sequelize.STRING,
         allowNull: false,
     },
-    role: {
-        type: Sequelize.STRING,
-    },
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,
 }, {timestamps: true});

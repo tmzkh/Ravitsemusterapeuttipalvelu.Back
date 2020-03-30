@@ -16,6 +16,8 @@ generateIncludes = (includeCustomer) => {
 
 module.exports = {
     get: ({dieticianId, customerId, startDate, endDate, includeCustomer, includeDescription}) => {
+
+        console.log(startDate, endDate);
         const includes = generateIncludes(includeCustomer);
         let wheres = {
             [Op.and]: {

@@ -8,7 +8,7 @@ module.exports = (query) => {
         dateErrors.startDate = "Start date is required";
         datesAreValid = false;
     } else {
-        let sd = moment(query.startDate, 'YYYY-MM-DD', true).format('YYYY-MM-DD HH:mm');
+        let sd = moment.utc(query.startDate + ' 00:00', 'YYYY-MM-DD HH:mm', true).format('YYYY-MM-DD HH:mm');
         if (sd == 'Invalid date') {
             dateErrors.startDate = "Invalid date formatting. Must be 'YYYY-MM-DD'";
             datesAreValid = false;
@@ -21,7 +21,9 @@ module.exports = (query) => {
         dateErrors.endDate = "End date is required";
         datesAreValid = false;
     } else {
-        let sd = moment(query.endDate, 'YYYY-MM-DD', true).format('YYYY-MM-DD HH:mm');
+        let datestr = query.endDate + ' 23:59';
+        let sd = moment.utc(datestr, 'YYYY-MM-DD HH:mm', true).format('YYYY-MM-DD HH:mm');
+        console.log(datestr, sd);
         if (sd == 'Invalid date') {
             dateErrors.endDate = "Invalid date formatting. Must be 'YYYY-MM-DD'";
             datesAreValid = false;

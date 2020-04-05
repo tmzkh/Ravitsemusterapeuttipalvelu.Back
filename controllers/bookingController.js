@@ -5,58 +5,33 @@ const Customer = require('../models/customer');
 
 const Op = require('sequelize').Op;
 
-generateIncludes = (includeCustomer) => {
-    let includes = [];
-    if (includeCustomer) {
-        includes.push({
-            model: Customer, 
-            attributes: ['id'],
-        });
-    }
-    return includes;
-}
+const get = ({dieticianId, customerId, startDate, endDate, includeCustomer, includeDescription}) => {
 
-generateWheres = (startDate, endDate, dieticianId, customerId) => {
-    let wheres = {
-        [Op.and]: {
-            startsAt: {
-                [Op.lt]: endDate
-            },
-            endsAt: {
-                [Op.gt]: startDate
-            }
+    const wheres = generateWheres(startDate, endDate, dieticianId, customerId);
+    const includes = generateIncludes(includeCustomer);
+
+
+    return new Promise((resolve, reject) => {
+        if (! dieticianId && ! customerId) {
+            reject(400);
+        } else {
+            let attributes = ['id', 'startsAt', 'endsAt'];
+            if (includeDescription) attributes.push('description');
+            model.findAll({ 
+                attributes: attributes,
+                include: includes,
+                where: wheres
+            }).then((result) => {
+                resolve(result);
+            }).catch((err) => {
+                reject(err);
+            });
         }
-    };
-    if (dieticianId) wheres.dieticianId = dieticianId;
-    if (customerId) wheres.customerId = customerId;
-    return wheres;
-}
+    });
+};
 
 module.exports = {
-    get: ({dieticianId, customerId, startDate, endDate, includeCustomer, includeDescription}) => {
-
-        const wheres = generateWheres(startDate, endDate, dieticianId, customerId);
-        const includes = generateIncludes(includeCustomer);
-
-
-        return new Promise((resolve, reject) => {
-            if (! dieticianId && ! customerId) {
-                reject(400);
-            } else {
-                let attributes = ['id', 'startsAt', 'endsAt'];
-                if (includeDescription) attributes.push('description');
-                model.findAll({ 
-                    attributes: attributes,
-                    include: includes,
-                    where: wheres
-                }).then((result) => {
-                    resolve(result);
-                }).catch((err) => {
-                    reject(err);
-                });
-            }
-        });
-    },
+    get: get,
 
     getOne: ({id, includeDietician, includeCustomer, includeDescription}) => {
         return new Promise((resolve, reject) => {
@@ -80,17 +55,36 @@ module.exports = {
     
     create: (newBooking) => {
         //console.log(newBooking);
-        return new Promise((resolve, reject) => {
-            return model.create({
-                customerId: newBooking.customerId,
-                dieticianId: newBooking.dieticianId,
-                startsAt: newBooking.startsAt,
-                endsAt: newBooking.endsAt,
-                description: newBooking.description,
-            }).then((result) => {
-                resolve(JSON.stringify(result));
-            }).catch((err) => {
-                reject(err);
+        return new Promise(async (resolve, reject) => {
+            const bookings = 
+                await get({
+                    dieticianId: newBooking.dieticianId,
+                    customerId: newBooking.customerId,
+                    startDate: newBooking.startsAt,
+                    endDate: newBooking.endsAt,
+                    includeCustomer: false,
+                    includeDescription: false
+                });
+
+            console.log(typeof (bookings), bookings.length);
+
+            if ( bookings.length == 0) {
+                return model.create({
+                    customerId: newBooking.customerId,
+                    dieticianId: newBooking.dieticianId,
+                    startsAt: newBooking.startsAt,
+                    endsAt: newBooking.endsAt,
+                    description: newBooking.description,
+                }).then((result) => {
+                    resolve(JSON.stringify(result));
+                }).catch((err) => {
+                    reject(err);
+                });
+            }
+            reject({
+                errors: {
+                    startsAt: 'Chosen time is not available'
+                }
             });
         });
     },
@@ -123,3 +117,36 @@ module.exports = {
         });
     }
 };
+
+generateIncludes = (includeCustomer) => {
+    let includes = [];
+    if (includeCustomer) {
+        includes.push({
+            model: Customer, 
+            attributes: ['id'],
+        });
+    }
+    if (includeCustomer) {
+        includes.push({
+            model: Customer, 
+            attributes: ['id'],
+        });
+    }
+    return includes;
+}
+
+generateWheres = (startDate, endDate, dieticianId, customerId) => {
+    let wheres = {
+        [Op.and]: {
+            startsAt: {
+                [Op.lt]: endDate
+            },
+            endsAt: {
+                [Op.gt]: startDate
+            }
+        }
+    };
+    if (dieticianId) wheres.dieticianId = dieticianId;
+    if (customerId) wheres.customerId = customerId;
+    return wheres;
+}

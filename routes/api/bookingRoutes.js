@@ -65,6 +65,8 @@ router.route('/')
                 });
                 return res.status(400)
                         .send(JSON.stringify({errors: errorObj}));
+            } else if (err.errors) {
+                return res.status(400).send(JSON.stringify(err.errors));
             }
             res.sendStatus(500);
         }

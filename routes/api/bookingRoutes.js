@@ -1,12 +1,13 @@
 const router = require('express').Router();
 const bookingController = require('../../controllers/bookingController');
+const customerController = require('../../controllers/customerController');
 const validateBookingDates = require('../../helpers/validateBookingDates');
 const validateGetQuery = require('../../helpers/validateGetBookingQuery');
 
+router.route('/')
 /**
  * GET /api/bookings
  */
-router.route('/')
     .get(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
         const { errors, isValid } = validateGetQuery(req.query);
@@ -29,12 +30,31 @@ router.route('/')
         }
 
     })
+/**
+ * GET /post/bookings
+ */
     .post(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
-
         try {
-            //console.log(req.body);
-            const result = await bookingController.create(req.body);
+            if (! req.body.customerId) {
+                let customer = 
+                    await customerController
+                        .getOne({
+                            id: null,
+                            name: null,
+                            email: req.body.customer.email
+                        }).catch(() => {customer = null});
+
+                if (customer == 404) {
+                    customer =
+                        await customerController
+                            .create(req.body.customer);
+                }
+
+                req.body.customerId = JSON.parse(customer).id;
+            }
+            const result = 
+                await bookingController.create(req.body);
             res.status(201).send(result);
         } catch (err) {
             if (err.name && (err.name === 'SequelizeValidationError' || 
@@ -51,6 +71,9 @@ router.route('/')
     });
 
 router.route('/:id')
+/**
+ * PUT /api/bookings/{id}
+ */
     .put(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
         try {
@@ -70,6 +93,9 @@ router.route('/:id')
             res.sendStatus(500);
         }
     })
+/**
+ * DELETE /api/bookings/{id}
+ */
     .delete(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
         bookingController

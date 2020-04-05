@@ -27,18 +27,15 @@ router.route('/')
             });
     })
     .post(async (req, res) => {
+        res.setHeader('Content-Type', 'application/json');
         customerController
             .create(req.body)
             .then((result) => {
-                res.setHeader('Content-Type', 'application/json');
                 res
                 .status(201)
                 .send(result);
             }).catch(err => {
-                // console.log("asdf");
-                // console.error(err);
                 let errorObj = {};
-                res.setHeader('Content-Type', 'application/json');
                 if (err.name && (err.name === 'SequelizeValidationError' || 
                     err.name === 'SequelizeUniqueConstraintError')) {
                     err.errors.forEach(er => {

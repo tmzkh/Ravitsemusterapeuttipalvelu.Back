@@ -16,23 +16,28 @@ generateIncludes = (includeCustomer) => {
     return includes;
 }
 
+generateWheres = (startDate, endDate, dieticianId, customerId) => {
+    let wheres = {
+        [Op.and]: {
+            startsAt: {
+                [Op.lt]: endDate
+            },
+            endsAt: {
+                [Op.gt]: startDate
+            }
+        }
+    };
+    if (dieticianId) wheres.dieticianId = dieticianId;
+    if (customerId) wheres.customerId = customerId;
+    return wheres;
+}
+
 module.exports = {
     get: ({dieticianId, customerId, startDate, endDate, includeCustomer, includeDescription}) => {
 
-        console.log(startDate, endDate);
+        const wheres = generateWheres(startDate, endDate, dieticianId, customerId);
         const includes = generateIncludes(includeCustomer);
-        let wheres = {
-            [Op.and]: {
-                startsAt: {
-                    [Op.lt]: endDate
-                },
-                endsAt: {
-                    [Op.gt]: startDate
-                }
-            }
-        };
-        if (dieticianId) wheres.dieticianId = dieticianId;
-        if (customerId) wheres.customerId = customerId;
+
 
         return new Promise((resolve, reject) => {
             if (! dieticianId && ! customerId) {

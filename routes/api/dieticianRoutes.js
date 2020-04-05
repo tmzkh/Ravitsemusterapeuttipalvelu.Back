@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const dieticianController = require('../../controllers/dieticianController');
-const authMiddleware = require('../../middlewares/auth');
+const AuthenticationMiddleware = require('../../middlewares/authenticationMiddleware');
 const getDieticiansQueryParser = require('../../helpers/getDieticiansQueryParser');
 
 router.route('/')   

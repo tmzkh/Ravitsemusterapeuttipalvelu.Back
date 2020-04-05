@@ -1,9 +1,14 @@
 const router = require('express').Router();
 const customerController = require('../../controllers/customerController');
-const authMiddleware = require('../../middlewares/auth');
+const AuthenticationMiddleware = require('../../middlewares/authenticationMiddleware');
+
+router.use(AuthenticationMiddleware);
 
 router.route('/')   
     .get(async (req, res) => {
+
+        console.log(req.authentication);
+
         res.setHeader('Content-Type', 'application/json');
         customerController
             .getAll()

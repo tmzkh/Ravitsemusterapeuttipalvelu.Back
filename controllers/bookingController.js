@@ -7,10 +7,12 @@ const Op = require('sequelize').Op;
 
 generateIncludes = (includeCustomer) => {
     let includes = [];
-    if (includeCustomer) includes.push({
-        model: Customer, 
-        attributes: ['id'],
-    });
+    if (includeCustomer) {
+        includes.push({
+            model: Customer, 
+            attributes: ['id'],
+        });
+    }
     return includes;
 }
 

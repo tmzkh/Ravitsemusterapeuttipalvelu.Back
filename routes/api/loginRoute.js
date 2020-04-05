@@ -8,14 +8,14 @@ router.route('/')
         if (! req.body.username || ! req.body.password)
             return res.sendStatus(400);
 
-        const success = await AuthenticationController.login({
+        await AuthenticationController.login({
             username: req.body.username,
             password: req.body.password
+        }).then((result) => {
+            return res.status(200).send(result);
+        }).catch((err) => {
+            return res.status(401).send(err);
         });
-        if (success)
-            return res.sendStatus(200);
-
-        return res.sendStatus(401);
     });
 
 module.exports = router;

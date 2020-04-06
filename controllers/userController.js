@@ -10,36 +10,30 @@ const generateWheres = ({id, username, password}) => {
     if (id) {
         return { id: id };
     }
-    let wheres = {
+    return {
         username: username
     };
-    if (password) {
-        wheres.password = password;
-    }
-    return wheres;
 }
 
 const generateIncludes = (id) => {
     if (id) {
-        return {
+        return [{
             model: Dietician,
             attributes: ['id'],
             as: 'dietician',
             required: false
-        };
+        }];
     }
-    return {};
+    return [];
 } 
 
 module.exports = {
     get: ({id, username, password}) => {
         return new Promise(async (resolve, reject) => {
-            const wheres = generateWheres({username, password});
+            const wheres = generateWheres({id, username, password});
             const includes = generateIncludes(id);
             let user = await User.findOne({
-                where: {
-                    username: username
-                },
+                where: wheres,
                 include: includes
             });
 

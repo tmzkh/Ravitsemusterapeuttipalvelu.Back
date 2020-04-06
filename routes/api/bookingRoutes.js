@@ -1,14 +1,29 @@
 const router = require('express').Router();
 const bookingController = require('../../controllers/bookingController');
 const customerController = require('../../controllers/customerController');
-const validateBookingDates = require('../../helpers/validateBookingDates');
 const validateGetQuery = require('../../helpers/validateGetBookingQuery');
+const AuthenticationMiddleware = require('../../middlewares/authenticationMiddleware');
+
+router.use(AuthenticationMiddleware);
 
 router.route('/')
 /**
  * GET /api/bookings
  */
     .get(async (req, res) => {
+
+        // get authentication object from request (inserted in authentication middleware)
+        const auth = req.authentication;
+
+        let includeIdAndCustomerDetails = false;
+
+        // if request is made by dietician, description can be shown
+        if (auth && req.query.dieticianId 
+            && auth.dieticianId == req.query.dieticianId) 
+        {
+            includeIdAndCustomerDetails = true;
+        }
+
         res.setHeader('Content-Type', 'application/json');
         const { errors, isValid } = validateGetQuery(req.query);
         if (isValid) {
@@ -18,8 +33,7 @@ router.route('/')
                     customerId: req.query.customerId,
                     startDate: req.query.startDate, 
                     endDate: req.query.endDate,
-                    includeCustomer: true,
-                    includeDescription: true
+                    includeIdAndCustomerDetails: includeIdAndCustomerDetails
                 });
                 res.send(JSON.stringify(result));
             } catch (err) {
@@ -51,11 +65,11 @@ router.route('/')
                             .create(req.body.customer);
                 }
 
-                req.body.customerId = JSON.parse(customer).id;
+                req.body.customerId = customer.id;
             }
             const result = 
                 await bookingController.create(req.body);
-            res.status(201).send(result);
+            res.status(201).send(JSON.stringify(result));
         } catch (err) {
             if (err.name && (err.name === 'SequelizeValidationError' || 
                 err.name === 'SequelizeUniqueConstraintError')) {
@@ -78,6 +92,19 @@ router.route('/:id')
  */
     .put(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
+
+        // get authentication object from request (inserted in authentication middleware)
+        const auth = req.authentication;
+
+        let includeDescription = false;
+
+        // if request is made by dietician, description can be shown
+        if (auth && req.query.dieticianId 
+            && auth.dieticianId == req.query.dieticianId) 
+        {
+            includeDescription = true;
+        }
+
         try {
             req.body.id = req.params.id;
             const result = await bookingController.update(req.body);

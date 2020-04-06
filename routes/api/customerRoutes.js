@@ -13,7 +13,7 @@ router.route('/')
         customerController
             .getAll()
             .then((result) => {
-                res.send(result);
+                res.send(JSON.stringify(result));
             }).catch((err) => {
                 //console.error(err);
                 let errorObj = {};
@@ -33,7 +33,7 @@ router.route('/')
             .then((result) => {
                 res
                 .status(201)
-                .send(result);
+                .send(JSON.stringify(result));
             }).catch(err => {
                 let errorObj = {};
                 if (err.name && (err.name === 'SequelizeValidationError' || 
@@ -48,7 +48,7 @@ router.route('/')
             });
     });
 
-router.route('/:id', )
+router.route('/:id')
     .get(async (req, res) => {
         if (!checkIfIdIsUuid(req, res)) return;
         res.setHeader('Content-Type', 'application/json');
@@ -59,7 +59,7 @@ router.route('/:id', )
                     return res.sendStatus(404);
                 }
                 res.status(200)
-                    .send(result);
+                    .send(JSON.stringify(result));
             }).catch((err) => {
                 //console.error(err);
                 res.status(500)
@@ -79,7 +79,7 @@ router.route('/:id', )
                     return res.sendStatus(404);
                 }
                 res.status(200)
-                    .send(result);
+                    .send(JSON.stringify(result));
             }).catch((err) => {
                 console.log("tulee routen catchiin");
                 //console.error(err);

@@ -1,5 +1,7 @@
 const LoginController = require('../controllers/loginController');
 const UserController = require('../controllers/userController');
+const moment = require('moment');
+
 
 module.exports = async (req, res, next) => {
     // clear auth obj
@@ -13,14 +15,11 @@ module.exports = async (req, res, next) => {
         return next();
     }
 
-    console.log('authmid token', token);
-
     // try to fetch login from db based on token
     const login = 
         await LoginController
             .get({userId: null, token: token})
             .catch(err => {
-                console.log(err);
                 return null;
             });
 
@@ -29,13 +28,27 @@ module.exports = async (req, res, next) => {
         return res
             .status(401)
             .send({
-                error: 'Invalid access token'
+                errors: {
+                    accesstoken: 'Invalid access token'
+                }
             });
     }
 
-    LoginController.updateTimestampOnly(token);
+    const lastMomentToUseToken = moment(login.updatedAt).add(1, 'hours');
 
-    console.log(login.userId);
+    // if token is updated over an hour ago, it is expired and it is not valid
+    if ( moment().isAfter(lastMomentToUseToken.format('YYYY-MM-DD HH:mm')) ) {
+        return res
+            .status(401)
+            .send({
+                errors: {
+                    accesstoken: 'Invalid access token'
+                }
+            });
+    }
+
+
+    LoginController.updateTimestampOnly(token);
 
     const user = 
         await UserController.get({
@@ -48,14 +61,18 @@ module.exports = async (req, res, next) => {
         return res
             .status(401)
             .send({
-                error: 'Invalid access token'
+                errors: {
+                    accesstoken: 'Invalid access token'
+                }
             });
     }
 
     req.authentication = {
         userId: user.id,
-        dieticianId: user.dietician.id
+        dieticianId: user.dietician 
+            ? user.dietician.id
+            : null
     };
-    
+
     next();
 }

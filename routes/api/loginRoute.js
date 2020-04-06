@@ -12,7 +12,7 @@ router.route('/')
             username: req.body.username,
             password: req.body.password
         }).then((result) => {
-            return res.status(200).send(result);
+            return res.status(200).send(JSON.stringify(result));
         }).catch((err) => {
             return res.status(401).send(err);
         });

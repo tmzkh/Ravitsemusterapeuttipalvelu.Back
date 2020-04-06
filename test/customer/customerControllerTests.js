@@ -33,7 +33,7 @@ describe('Customer controller', () => {
                 name: name, 
                 email: email
             }).then(result => {
-                createdCustomer = JSON.parse(result);
+                createdCustomer = result;
             });
         });
 
@@ -62,7 +62,7 @@ describe('Customer controller', () => {
             }); 
 
             it('should get one with existing id without problems', async () => {
-                foundCustomer = JSON.parse(await customerController.getOne({id: createdCustomer.id}));
+                foundCustomer = await customerController.getOne({id: createdCustomer.id});
             });
             it('found customer should match with created one', () => {
                 assert.equal(foundCustomer.id, createdCustomer.id, "id does not match");
@@ -87,12 +87,11 @@ describe('Customer controller', () => {
 
         it('should update without problems', async () => {
             modifiedCustomer = 
-                JSON.parse(
-                    await customerController.update({
-                        id: createdCustomer.id,
-                        name: modifiedName,
-                        email: createdCustomer.email
-                    }));
+                await customerController.update({
+                    id: createdCustomer.id,
+                    name: modifiedName,
+                    email: createdCustomer.email
+                });
         }); 
         it('name should not be same anymore', () => {
             assert.notEqual(modifiedCustomer.name, createdCustomer.name);

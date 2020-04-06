@@ -5,18 +5,20 @@ const Customer = require('../models/customer');
 
 const Op = require('sequelize').Op;
 
-const get = ({dieticianId, customerId, startDate, endDate, includeCustomer, includeDescription}) => {
+const get = ({dieticianId, customerId, startDate, endDate, includeIdAndCustomerDetails}) => {
 
     const wheres = generateWheres(startDate, endDate, dieticianId, customerId);
-    const includes = generateIncludes(includeCustomer);
-
+    const includes = generateIncludes(includeIdAndCustomerDetails);
 
     return new Promise((resolve, reject) => {
         if (! dieticianId && ! customerId) {
             reject(400);
         } else {
-            let attributes = ['id', 'startsAt', 'endsAt'];
-            if (includeDescription) attributes.push('description');
+            let attributes = ['startsAt', 'endsAt'];
+            if (includeIdAndCustomerDetails) {
+                attributes.unshift('id');
+                attributes.push('description');
+            }
             model.findAll({ 
                 attributes: attributes,
                 include: includes,
@@ -33,17 +35,20 @@ const get = ({dieticianId, customerId, startDate, endDate, includeCustomer, incl
 module.exports = {
     get: get,
 
-    getOne: ({id, includeDietician, includeCustomer, includeDescription}) => {
+    getOne: ({id, includeDietician, includeIdAndCustomerDetails}) => {
         return new Promise((resolve, reject) => {
             if (id) {
                 const includes = generateIncludes(includeDietician, includeCustomer);
-                let attributes = ['id', 'customerId', 'dieticianId', 'startsAt', 'endsAt'];
-                if (includeDescription) attributes.push('description');
+                let attributes = ['startsAt', 'endsAt'];
+                if (includeIdAndCustomerDetails) {
+                    attributes.unshift('id');
+                    attributes.push('description');
+                }
                 model.findByPk(id, { 
                     attributes: attributes,
                     include: includes,
                 }).then((result) => {
-                    resolve(JSON.stringify(result));
+                    resolve(result);
                 }).catch((err) => {
                     reject(err);
                 });
@@ -54,7 +59,6 @@ module.exports = {
     },
     
     create: (newBooking) => {
-        //console.log(newBooking);
         return new Promise(async (resolve, reject) => {
             const bookings = 
                 await get({
@@ -62,11 +66,8 @@ module.exports = {
                     customerId: newBooking.customerId,
                     startDate: newBooking.startsAt,
                     endDate: newBooking.endsAt,
-                    includeCustomer: false,
-                    includeDescription: false
+                    includeIdAndCustomerDetails: false
                 });
-
-            console.log(typeof (bookings), bookings.length);
 
             if ( bookings.length == 0) {
                 return model.create({
@@ -76,7 +77,7 @@ module.exports = {
                     endsAt: newBooking.endsAt,
                     description: newBooking.description,
                 }).then((result) => {
-                    resolve(JSON.stringify(result));
+                    resolve(result);
                 }).catch((err) => {
                     reject(err);
                 });
@@ -90,13 +91,13 @@ module.exports = {
     },
 
     update: (updatedBooking) => {
-        //console.log(newBooking);
         return new Promise((resolve, reject) => {
             return model.update({
                 startsAt: updatedBooking.startsAt,
                 endsAt: updatedBooking.endsAt,
-            }, {where: {id: updatedBooking.id}}).then((result) => {
-                resolve(JSON.stringify(result));
+            }, {where: {id: updatedBooking.id}})
+            .then((result) => {
+                resolve(result);
             }).catch((err) => {
                 reject(err);
             });

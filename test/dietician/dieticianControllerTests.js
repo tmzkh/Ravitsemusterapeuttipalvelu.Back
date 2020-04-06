@@ -33,18 +33,18 @@ describe('Dietician controller', () => {
             err => assert.instanceOf(err, Sequelize.ValidationError));
         });
 
-        it('should create with correct infromation without problems', () => {
-            return dieticianController.create({
-                name: name, 
-                education: education,
-                place: place,
-                email: email,
-                phone: phone,
-                imageUrl: imageUrl,
-                isPending: isPending
-            }).then(result => {
-                createdDietician = JSON.parse(result);
-            });
+        it('should create with correct infromation without problems', async () => {
+            createdDietician = 
+                await dieticianController.create({
+                    name: name, 
+                    education: education,
+                    place: place,
+                    email: email,
+                    phone: phone,
+                    imageUrl: imageUrl,
+                    isPending: isPending,
+                    testing: true
+                });
         });
 
         it('name and email should match', () => {
@@ -57,10 +57,10 @@ describe('Dietician controller', () => {
         describe('getAll()', () => {
             let allDieticians;
             it('should get all without problems', async () => {
-                allDieticians = await dieticianController.getAll()
-            }); 
+                allDieticians = await dieticianController.getAll();
+            });
             it('allCustomers count should be atleast 1', () => {
-                assert.isAtLeast(allDieticians.length, 1, "count is 0 for some reason")
+                assert.isAtLeast(allDieticians.length, 1, "count is 0 for some reason");
             }); 
         });
         describe('getOne()', () => {
@@ -72,7 +72,7 @@ describe('Dietician controller', () => {
             }); 
 
             it('should get one with existing id without problems', async () => {
-                foundDietician = JSON.parse(await dieticianController.getOne({id: createdDietician.id}));
+                foundDietician = await dieticianController.getOne({id: createdDietician.id});
             });
             it('found customer should match with created one', () => {
                 assert.equal(foundDietician.id, createdDietician.id, "id does not match");
@@ -97,12 +97,11 @@ describe('Dietician controller', () => {
 
         it('should update without problems', async () => {
             modifiedDietician = 
-                JSON.parse(
-                    await dieticianController.update({
-                        id: createdDietician.id,
-                        name: modifiedName,
-                        email: createdDietician.email
-                    }));
+                await dieticianController.update({
+                    id: createdDietician.id,
+                    name: modifiedName,
+                    email: createdDietician.email
+                });
         }); 
         it('name should not be same anymore', () => {
             assert.notEqual(modifiedDietician.name, createdDietician.name);

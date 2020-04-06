@@ -5,7 +5,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             model.findAll({attributes: ['id', 'name', 'email']})
             .then((customers) => {
-                resolve(JSON.stringify(customers));
+                resolve(customers);
             }).catch((err) => {
                 //console.error(err);
                 reject(err);
@@ -13,7 +13,6 @@ module.exports = {
         });
     },
     getOne: ({id, name, email}) => {
-
         let wheres = {};
         if (id) wheres.id = id;
         if (name) wheres.name = name;
@@ -29,11 +28,11 @@ module.exports = {
                         if (!result) {
                             resolve(404);
                         } else {
-                            resolve(JSON.stringify({
+                            resolve({
                                 id: result.id,
                                 name: result.name,
                                 email: result.email
-                            }));
+                            });
                         }
                     }).catch((err) => {
                         //console.error(err);
@@ -50,11 +49,11 @@ module.exports = {
             model
                 .create({name: name, email: email})
                 .then((result) => {
-                    resolve(JSON.stringify({
+                    resolve({
                         id: result.id,
                         name: result.name,
                         email: result.email
-                    }));
+                    });
                 }).catch((err) => {
                     //console.error(err);
                     reject(err);
@@ -76,11 +75,11 @@ module.exports = {
                     resolve(404);
                 }).then(result => {
                     if (typeof(result) != 'undefined') {
-                        resolve(JSON.stringify({
+                        resolve({
                             id: result.id,
                             name: result.name,
                             email: result.email
-                        }));
+                        });
                     } else {
                         resolve(404);
                     }

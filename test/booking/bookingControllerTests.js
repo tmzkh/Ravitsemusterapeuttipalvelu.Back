@@ -3,12 +3,14 @@ const bookingController = require('../../controllers/bookingController');
 const Sequelize = require('sequelize');
 let exs;
 
+const moment = require('moment');
+
 let createdBooking = {};
 
 const dietId = "9b2a7778-73aa-4841-8a31-f88f6be268bf";
 const custId = "efb936eb-19d5-47fd-9ba6-56d6b1c2baa0";
-const startsAt = "2020-03-01T12:15:00.000Z";
-const endsAt = "2020-03-01T12:30:00.000Z";
+const startsAt = "2020-09-01T12:15:00.000Z";
+const endsAt = "2020-09-01T12:30:00.000Z";
 const description = "Gluteeniton ruokavalio"
 const modifiedStartsAt = "2020-03-02T12:15:00.000Z";
 const modifiedEndsAt = "2020-03-02T12:30:00.000Z";
@@ -38,15 +40,15 @@ describe('Booking controller', () => {
                 endsAt: endsAt,
                 description: description
             }).then(result => {
-                createdBooking = JSON.parse(result);
+                createdBooking = result;
             });
         });
 
         it('name and email should match', () => {
             assert.equal(createdBooking.dieticianId, dietId, "dieticianId does not match");
             assert.equal(createdBooking.customerId, custId, "customerId does not match");
-            assert.equal(createdBooking.startsAt, startsAt, "start date does not match");
-            assert.equal(createdBooking.endsAt, endsAt, "end date does not match");
+            assert.equal(moment(createdBooking.startsAt).format('YYYY-MM-DD HH:mm'), moment(startsAt).format('YYYY-MM-DD HH:mm'), "start date does not match");
+            assert.equal(moment(createdBooking.endsAt).format('YYYY-MM-DD HH:mm'), moment(endsAt).format('YYYY-MM-DD HH:mm'), "end date does not match");
             assert.equal(createdBooking.description, description, "description does not match");
         }); 
     });
@@ -109,18 +111,20 @@ describe('Booking controller', () => {
             assert.equal(modifiedCustomer.email, createdCustomer.email);
         }); 
     });
+    */ 
+    
     describe('delete', () => {
         it('should not delete with wrong id', () => {
-            return customerController
+            return bookingController
                     .delete('cda3b043-d14c-44f3-88c4-31de0508bf56')
                     .then(() => {},
                     err => assert.instanceOf(err, Error));
         });
 
         it('should delete with correct id without problems', () => {
-            return customerController
-                .delete(createdCustomer['id'])
+            return bookingController
+                .delete(createdBooking.id)
                 .then(() => {});
         }); 
-    });*/
+    });
 });

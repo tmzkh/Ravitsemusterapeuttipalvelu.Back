@@ -18,7 +18,7 @@ module.exports = {
             const userId = user ? user.id : '';
 
             // fetch login-object from db if exists
-            const login = 
+            let login = 
                 await LoginController.get({
                     userId: userId,
                     token: null
@@ -40,12 +40,10 @@ module.exports = {
             }
 
             if (login) {
-                return resolve(
-                    JSON.stringify({
-                        AccessToken: login.accessToken,
-                        TTL: 3600
-                    })
-                );
+                return resolve({
+                    AccessToken: login.accessToken,
+                    TTL: 3600
+                });
             }
             return reject(401);
         });

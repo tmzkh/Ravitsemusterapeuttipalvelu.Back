@@ -24,8 +24,6 @@ module.exports = (query) => {
 
     const { dateErrors, datesAreValid } = validateBookingDates(query);
 
-    console.log(dateErrors, datesAreValid);
-
     for (const key in dateErrors) {
         if (dateErrors.hasOwnProperty(key)) {
             errors[key] = dateErrors[key];

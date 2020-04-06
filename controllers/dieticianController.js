@@ -22,10 +22,8 @@ module.exports = {
                 },
             })
             .then((dietician) => {
-                console.log()
-                resolve(JSON.stringify(dietician));
+                resolve(dietician);
             }).catch((err) => {
-                //console.error(err);
                 reject(err);
             });
         });
@@ -76,9 +74,8 @@ module.exports = {
                         },
                     })
             }).then((result) => {
-                resolve(JSON.stringify(result));
+                resolve(result);
             }).catch((err) => {
-                console.log(err);
                 reject(err);
             });
         });
@@ -106,15 +103,9 @@ module.exports = {
                         if (!result) {
                             resolve(404);
                         } else {
-                            console.log(result);
-                            resolve(JSON.stringify({
-                                id: result.id,
-                                name: result.name,
-                                email: result.email
-                            }));
+                            resolve(result);
                         }
                     }).catch((err) => {
-                        //console.error(err);
                         reject("Could not find dietician");
                     });
             } else {
@@ -123,20 +114,35 @@ module.exports = {
         });
     },
 
-    create: ({ name, education, place, email, phone, imageUrl }) => {
+    create: ({ name, education, place, email, phone, imageUrl, testing }) => {
         return new Promise((resolve, reject) => {
             model
-                .create({ name: name, education: education, place: place, email: email, phone: phone, imageUrl: imageUrl })
+                .create({ 
+                    name: name, 
+                    education: education, 
+                    place: place, 
+                    email: email, 
+                    phone: phone, 
+                    imageUrl: imageUrl,
+                    isPending: testing ? false : true
+                })
                 .then((result) => {
-                    resolve(JSON.stringify(result));
+                    resolve({
+                        id: result.id,
+                        name: result.name, 
+                        education: result.education, 
+                        place: result.place, 
+                        email: result.email, 
+                        phone: result.phone, 
+                        imageUrl: result.imageUrl
+                    });
                 }).catch((err) => {
-                    //console.error(err);
                     reject(err);
                 });
         });
     },
 
-    update: ({ id, name, education, place, email, phone, imageUrl }) => {
+    update: ({ id, name, education, place, email, phone, imageUrl, isPending }) => {
         return new Promise((resolve, reject) => {
             model
                 .update({
@@ -145,7 +151,8 @@ module.exports = {
                     place: place,
                     email: email,
                     phone: phone,
-                    imageUrl: imageUrl
+                    imageUrl: imageUrl,
+                    isPending: isPending
                 }, { where: { id: id } })
                 .then((result) => {
                     if (result == 1) {
@@ -165,13 +172,12 @@ module.exports = {
                     resolve(404);
                 }).then(result => {
                     if (typeof (result) != 'undefined') {
-                        resolve(JSON.stringify(result));
+                        resolve(result);
                     } else {
                         resolve(404);
                     }
                 })
                 .catch((err) => {
-                    //console.error(err);
                     reject(err);
                 });
         });

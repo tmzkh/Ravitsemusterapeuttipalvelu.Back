@@ -7,8 +7,8 @@ const { assert } = require('chai');
 const dieticianController = require('../../controllers/dieticianController');
 
 let createdDietician = {};
-const name = "Tero";
-const modifiedName = "Mikko";
+const name = "Tero Testeri";
+const modifiedName = "Mikko Testeri";
 const education = "Koulu";
 const place = "Kuopio";
 const email = "tero@mail.com";
@@ -42,7 +42,6 @@ describe('Dietician controller', () => {
                     email: email,
                     phone: phone,
                     imageUrl: imageUrl,
-                    isPending: isPending,
                     testing: true
                 });
         });

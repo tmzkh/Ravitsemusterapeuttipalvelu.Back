@@ -20,6 +20,9 @@ describe('dietician', () => {
 });
 
 describe('booking', () => {
-    require('./booking/bookingModelTests');
     require('./booking/bookingControllerTests');
+});
+
+describe('user', () => {
+    require('./user/userControllerTests');
 });

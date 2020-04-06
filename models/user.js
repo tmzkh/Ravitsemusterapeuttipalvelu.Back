@@ -22,10 +22,13 @@ const User = db.define('user', {
             isUUID: 4,
         }
     },
-    userName: {
+    username: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
+        unique: {
+            args: true,
+            msg: "Username already taken"
+        },
         validate: {
             notNull: {
                 msg: "Username is required"

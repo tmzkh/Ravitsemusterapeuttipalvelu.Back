@@ -1,6 +1,10 @@
 const UserController = require('./userController');
 const LoginController = require('./loginController');
 
+const bcrypt = require('bcrypt');
+
+const pwdForFakeTest = '$2b$10$lZ/ekZv2LkfIvvL9K3WACuLn9b.OkMq4.ufISwu3S/MxxGRpqQRne';
+
 module.exports = {
     login: async ({username, password}) => {
         return new Promise(async (resolve, reject) => {
@@ -9,10 +13,17 @@ module.exports = {
                 await UserController.get({
                     id: null,
                     username: username,
-                    password: password
                 }).catch(err => {
                     console.log('catch', err);
                 });
+
+            if (user && user.password) {
+                if ( ! await bcrypt.compare(password, user.password) ) {
+                    user = null;
+                }
+            } else {
+                await bcrypt.compare('T3hd4antest1', pwdForFakeTest);
+            }
 
             // extract userId
             const userId = user ? user.id : '';

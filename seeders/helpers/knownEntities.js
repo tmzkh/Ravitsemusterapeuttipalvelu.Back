@@ -81,14 +81,14 @@ module.exports = {
     },
     user1: {
         id: 'e9e85d25-718a-4c12-b7f4-8f7157e86832',
-        userName: 'admin@email.com',
+        username: 'admin@email.com',
         password: 'salasana',
         roleId: 1,
         dieticianId: null,
     },
     user2: {
         id: 'c441f5db-b670-4a95-83ac-05287bb4bc86',
-        userName: 'tera@email.com',
+        username: 'tera@email.com',
         password: 'salasana',
         roleId: 2,
         dieticianId: '9b2a7778-73aa-4841-8a31-f88f6be268bf',

@@ -6,7 +6,7 @@ router.route('/')
         res.setHeader('Content-Type', 'application/json');
         expertiseController.getAll()
         .then((result) => {
-            res.send(result);
+            res.send(JSON.stringify(result));
         }).catch((err) => {
             console.error(err);
             let errorObj = {};

@@ -7,9 +7,9 @@ const { assert } = require('chai');
 const customerController = require('../../controllers/customerController');
 
 let createdCustomer = {};
-const name = "Tommi";
-const modifiedName = "Tommy";
-const email = "tommi.hyvarinen@email.com"
+const name = "Tommi Testeri";
+const modifiedName = "Tommy Testeri";
+const email = "tommi.testeri@email.com"
 
 describe('Customer controller', () => {
     describe('create', () => {
@@ -28,12 +28,10 @@ describe('Customer controller', () => {
             err => assert.instanceOf(err, Sequelize.ValidationError));
         });
 
-        it('should create with correct infromation without problems', () => {
-            return customerController.create({
-                name: name, 
+        it('should create with correct infromation without problems', async () => {
+            createdCustomer = await customerController.create({
+                name: name,
                 email: email
-            }).then(result => {
-                createdCustomer = result;
             });
         });
 

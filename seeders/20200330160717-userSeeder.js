@@ -15,14 +15,14 @@ module.exports = {
     [
       {
         id: knownEntities.user1.id,
-        userName: knownEntities.user1.userName,
+        username: knownEntities.user1.username,
         password: pwd1,
         roleId: knownEntities.user1.roleId,
         dieticianId: knownEntities.user1.dieticianId,
       },
       {
         id: knownEntities.user2.id,
-        userName: knownEntities.user2.userName,
+        username: knownEntities.user2.username,
         password: pwd2,
         roleId: knownEntities.user2.roleId,
         dieticianId: knownEntities.user2.dieticianId,

@@ -1,7 +1,9 @@
 const router = require('express').Router();
 const dieticianController = require('../../controllers/dieticianController');
+const dieticianExpertiseController = require('../../controllers/dieticianExpertiseController');
 const AuthenticationMiddleware = require('../../middlewares/authenticationMiddleware');
 const getDieticiansQueryParser = require('../../helpers/getDieticiansQueryParser');
+const updateRequestFormatter = require('../../helpers/validateAndFormatUpdateDieticianRequest');
 
 router.use(AuthenticationMiddleware);
 
@@ -106,19 +108,12 @@ router.route('/:id', )
             return res.sendStatus(401);
         }
 
-        let updateObj = {};
+        let { updateObj } = updateRequestFormatter({ auth: auth, body: req.body });
+        let expertises;
 
-        if (auth.role == 'admin') {
-            if (req.body.isPending) updateObj.isPending = req.body.isPending;
-        } else if (auth.role == 'dietician' && auth.dieticianId == req.params.id) {
-            if (req.body.name) updateObj.name = req.body.name;
-            if (req.body.education) updateObj.education = req.body.education;
-            if (req.body.place) updateObj.place = req.body.place;
-            // if (req.body.email) updateObj.email = req.body.email;
-            if (req.body.phone) updateObj.phone = req.body.phone;
-            if (req.body.imageUrl) updateObj.imageUrl = req.body.imageUrl;
-        } else {
-            return res.sendStatus(401);
+        if (updateObj.expertises) {
+            expertises = updateObj.expertises;
+            delete updateObj.expertises;
         }
 
         try {
@@ -127,9 +122,20 @@ router.route('/:id', )
                     id: req.params.id, 
                     updateObj: updateObj
                 });
+
             if (result === 404) {
                 return res.sendStatus(404);
             }
+
+            if (expertises) {
+                let exResult = 
+                    await dieticianExpertiseController.clearAll(req.params.id);
+                    
+                if (exResult === 404) {
+                    return res.sendStatus(404);
+                }
+            }
+
             res.status(200)
                 .send(JSON.stringify(result));
         } catch (error) {

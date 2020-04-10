@@ -106,10 +106,10 @@ module.exports = {
                             resolve(result);
                         }
                     }).catch((err) => {
-                        reject("Could not find dietician");
+                        reject(err);
                     });
             } else {
-                reject("Could not find dietician");
+                reject(err);
             }
         });
     },

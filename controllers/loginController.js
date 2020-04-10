@@ -11,24 +11,23 @@ module.exports = {
     get: async ({userId, token}) => {
         return new Promise(async (resolve, reject) => {
             const where = wheres({userId, token});
-            const login = await Login.findOne({
-                where: where
-            });
-            resolve(login);
+            try {
+                resolve(await Login.findOne({ where: where }));
+            } catch (e) {
+                reject(e);
+            }
         });
     },
     create: async (userId) => {
         return new Promise(async (resolve, reject) => {
             const token = require('crypto')
                 .randomBytes(48).toString('hex');
-
-            const result = 
-                await Login.create({
-                    userId: userId,
-                    accessToken: token
-                });
-
-            resolve(result);
+            try {
+                const result = await Login.create({userId: userId, accessToken: token});
+                resolve(result);
+            } catch (e) {
+                reject(e);
+            }
         });
     },
     updateToken: async (token) => {
@@ -36,37 +35,47 @@ module.exports = {
             const newToken = require('crypto')
                 .randomBytes(48).toString('hex');
 
-            const result = 
-                await Login.update(
-                    { accessToken: newToken }, { where: { accessToken: token } });
-
-            if (result == 1)
-                return resolve(newToken);
-            
-            return reject();
+            try {
+                const result = 
+                    await Login.update(
+                        { accessToken: newToken }, 
+                        { where: { accessToken: token } });
+                if (result == 1)
+                    return resolve(newToken);
+                return reject();
+            } catch (e) {
+                reject(e);
+            }
         });
     },
     updateTimestampOnly: async (token) => {
         return new Promise(async (resolve, reject) => {
-            const result = 
-                await Login.update(
-                    { accessToken: token }, { where: { accessToken: token } });
+            try {
+                const result = 
+                    await Login.update(
+                        {accessToken: token}, {where: {accessToken: token}});
 
-            if (result == 1)
-                return resolve(token);
-            
-            return reject();
+                if (result == 1)
+                    return resolve(token);
+                
+                return reject();
+            } catch (e) {
+                reject(e);
+            }
         });
     },
     delete: async ({userId, token}) => {
         return new Promise(async (resolve, reject) => {
             const where = wheres({userId, token});
-            const result = 
-                await Login.destroy({ where: where });
-            if (result == 1) {
-                resolve();
+            try {
+                const result = await Login.destroy({ where: where });
+                if (result == 1) {
+                    resolve();
+                }
+                reject(404);
+            } catch (e) {
+                reject(e);
             }
-            reject(404);
         });
     }
 };

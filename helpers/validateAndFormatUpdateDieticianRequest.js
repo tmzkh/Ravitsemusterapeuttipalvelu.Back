@@ -1,4 +1,9 @@
+
+const expertisesArrayValidator = require('./validateAndFormatExpertisesArrayFromRequest');
+
 module.exports = ({ body, auth }) => {
+    let updateObj = {};
+
     if (auth.role == 'admin') {
         if (body.isPending) updateObj.isPending = body.isPending;
     } else if (auth.role == 'dietician' && auth.dieticianId == params.id) {
@@ -8,7 +13,20 @@ module.exports = ({ body, auth }) => {
         // if (body.email) updateObj.email = body.email;
         if (body.phone) updateObj.phone = body.phone;
         if (body.imageUrl) updateObj.imageUrl = body.imageUrl;
+        if (body.expertises) {
+            const { 
+                error, 
+                expertises 
+            } = expertisesArrayValidator(body.expertises);
+            if (error) {
+                return { error: error };
+            } else {
+                updateObj.expertises = expertises;
+            }
+        }
     } else {
-        return "unauthorized";
+        return { error: "unauthorized" };
     }
+
+    return { updateObj };
 }

@@ -6,7 +6,9 @@ const GetDieticiansQueryParser = (query) => {
 
         const searchQuery = query.query ? query.query : "";
 
-        const showPengind = query.isPengind ? true : false;
+        console.log(query);
+
+        const showPengind = query.isPending ? true : false;
 
         if (typeof searchQuery != 'string')
             return { error: "Search query must be a string" };

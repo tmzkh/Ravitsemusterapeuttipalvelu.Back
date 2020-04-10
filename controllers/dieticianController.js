@@ -29,9 +29,7 @@ module.exports = {
         });
     },
     getFiltered: ({ query, expertiseIds, showPengind }) => {
-        let expertiseWheres = {
-            isPending: showPengind,
-        };
+        let expertiseWheres = {};
 
         if (expertiseIds && expertiseIds.length > 0) {
             let idWheres = [];
@@ -45,14 +43,17 @@ module.exports = {
             // first we must find dietician id:s
             return model.findAll({
                 where: {
-                    [Op.or]: {
-                        'name': {
-                            [Op.like]: `%${query}%` 
+                    [Op.and]: {
+                        [Op.or]: {
+                            'name': {
+                                [Op.like]: `%${query}%` 
+                            },
+                            'place': {
+                                [Op.like]: `%${query}%` 
+                            }
                         },
-                        'place': {
-                            [Op.like]: `%${query}%` 
-                        }
-                    },
+                        isPending: showPengind
+                    }
                 },
                 include: {
                     model: expertiseModel,
@@ -67,6 +68,7 @@ module.exports = {
                         where: {
                             id: dieticianIds
                         },
+                        attributes: ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'],
                         include: {
                             model: expertiseModel,
                             attributes: ['id'],

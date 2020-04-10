@@ -6,11 +6,11 @@ const getDieticiansQueryParser = require('../../helpers/getDieticiansQueryParser
 router.route('/')   
     .get(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
-        if (! req.query.expertises && ! req.query.query) {
+        if (! req.query.expertises && ! req.query.query && ! req.query.isPending) {
             dieticianController
             .getAll()
             .then((result) => {
-                res.send(JSON.parse(result));
+                res.send(JSON.stringify(result));
             }).catch((err) => {
                 //console.error(err);
                 let errorObj = {};
@@ -19,6 +19,7 @@ router.route('/')
                         errorObj[er.path] = er.message;
                     });
                 }
+                console.log("tulee tänne", err);
                 res.status(500)
                     .send(JSON.stringify({errors: errorObj}));
             });

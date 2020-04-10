@@ -3,13 +3,13 @@ const model = require('../models/customer');
 module.exports = {
     getAll: () => {
         return new Promise((resolve, reject) => {
-            model.findAll({attributes: ['id', 'name', 'email']})
-            .then((customers) => {
-                resolve(customers);
-            }).catch((err) => {
-                //console.error(err);
-                reject(err);
-            });
+            try {
+                resolve(
+                    await model.findAll({attributes: ['id', 'name', 'email']})
+                );
+            } catch (e) {
+                reject(e);
+            }
         });
     },
     getOne: ({id, name, email}) => {
@@ -20,24 +20,23 @@ module.exports = {
 
         return new Promise((resolve, reject) => {
             if (id || name || email) {
-                model
-                    .findOne({
-                        attributes: ['id', 'name', 'email'],
-                        where: wheres
-                    }).then((result) => {
-                        if (!result) {
-                            resolve(404);
-                        } else {
-                            resolve({
-                                id: result.id,
-                                name: result.name,
-                                email: result.email
+                try {   
+                    const result = 
+                        await model.findOne({
+                                attributes: ['id', 'name', 'email'],
+                                where: wheres
                             });
-                        }
-                    }).catch((err) => {
-                        //console.error(err);
-                        reject("Could not find customer");
+                    if (! result) {
+                        resolve(404);
+                    }
+                    resolve({
+                        id: result.id,
+                        name: result.name,
+                        email: result.email
                     });
+                } catch (e) {
+                    reject(e);
+                }
             } else {
                 reject("Could not find customer");
             }
@@ -46,62 +45,51 @@ module.exports = {
 
     create: ({name, email}) => {
         return new Promise((resolve, reject) => {
-            model
-                .create({name: name, email: email})
-                .then((result) => {
-                    resolve({
-                        id: result.id,
-                        name: result.name,
-                        email: result.email
-                    });
-                }).catch((err) => {
-                    //console.error(err);
-                    reject(err);
+            try {
+                const result = await model.create({name: name, email: email});
+                resolve({
+                    id: result.id,
+                    name: result.name,
+                    email: result.email
                 });
+            } catch (e) {
+                reject(e);
+            }
         });
     },
 
     update: ({id, name, email}) => {
         return new Promise((resolve, reject) => {
-            model
-                .update({
-                    name: name, 
-                    email: email
-                }, { where: { id: id } })
-                .then((result) => {
-                    if (result == 1) {
-                        return model.findByPk(id);
-                    }
-                    resolve(404);
-                }).then(result => {
+            try {
+                let result = 
+                    await model.update({name: name, email: email}, { where: { id: id } });
+                if (result == 1) {
+                    result = await model.findByPk(id);
                     if (typeof(result) != 'undefined') {
-                        resolve({
+                        return resolve({
                             id: result.id,
                             name: result.name,
                             email: result.email
                         });
-                    } else {
-                        resolve(404);
                     }
-                })
-                .catch((err) => {
-                    //console.error(err);
-                    reject(err);
-                });
+                }
+                resolve(404);
+            } catch (e) {
+                reject(e);
+            }
         });
     },
 
     delete: (id) => {
         return new Promise((resolve, reject) => {
-            model
-                .destroy({ where: { id: id } })
-                .then((result) => {
-                    if (result == 1)
-                        resolve();
-                    resolve(404);
-                }).catch((err) => {
-                    reject(err);
-                });
+            try {
+                const result = await model.destroy({ where: { id: id } });
+                if (result == 1)
+                    resolve();
+                resolve(404);
+            } catch (e) {
+                reject(e);
+            }
         });
     }
 };

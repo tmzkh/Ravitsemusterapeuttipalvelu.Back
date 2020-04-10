@@ -53,12 +53,12 @@ module.exports = {
             try {
                 const result = 
                     await Login.update(
-                        {accessToken: token}, {where: {accessToken: token}});
-
+                        {accessToken: token}, {where: {accessToken: token}}
+                    );
                 if (result == 1)
                     return resolve(token);
                 
-                return reject();
+                return resolve(404);
             } catch (e) {
                 reject(e);
             }

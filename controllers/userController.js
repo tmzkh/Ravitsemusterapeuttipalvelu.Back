@@ -55,11 +55,8 @@ const update = ({id, username, password}) => {
                 await User.update({
                     username: username, 
                     password: password,
-                }, {
-                    where: {
-                        id: id
-                    }
-                });
+                }, 
+                { where: { id: id } });
             if (result == 1)
                 resolve(await get({id: id, username: null}));
             reject(404);
@@ -87,9 +84,7 @@ const generateWheres = ({id, username}) => {
     if (id) {
         return { id: id };
     }
-    return {
-        username: username
-    };
+    return { username: username };
 };
 
 const generateIncludes = (id) => {

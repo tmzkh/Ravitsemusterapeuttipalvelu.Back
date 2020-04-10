@@ -3,26 +3,32 @@ const dieticianController = require('../../controllers/dieticianController');
 const AuthenticationMiddleware = require('../../middlewares/authenticationMiddleware');
 const getDieticiansQueryParser = require('../../helpers/getDieticiansQueryParser');
 
+router.use(AuthenticationMiddleware);
+
 router.route('/')   
     .get(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
+
+        // get authentication object from request (inserted in authentication middleware)
+        const auth = req.authentication;
+
         if (! req.query.expertises && ! req.query.query && ! req.query.isPending) {
             dieticianController
-            .getAll()
-            .then((result) => {
-                res.send(JSON.stringify(result));
-            }).catch((err) => {
-                //console.error(err);
-                let errorObj = {};
-                if (err.errors) {
-                    err.errors.forEach(er => {
-                        errorObj[er.path] = er.message;
-                    });
-                }
-                console.log("tulee tänne", err);
-                res.status(500)
-                    .send(JSON.stringify({errors: errorObj}));
-            });
+                .getAll()
+                .then((result) => {
+                    res.send(JSON.stringify(result));
+                }).catch((err) => {
+                    //console.error(err);
+                    let errorObj = {};
+                    if (err.errors) {
+                        err.errors.forEach(er => {
+                            errorObj[er.path] = er.message;
+                        });
+                    }
+                    console.log("tulee tänne", err);
+                    res.status(500)
+                        .send(JSON.stringify({errors: errorObj}));
+                });
         } else {
             const { 
                 error, 

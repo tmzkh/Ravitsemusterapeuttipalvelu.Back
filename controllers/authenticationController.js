@@ -10,13 +10,10 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
                 // fetch user from db
-                let user= await UserController.get({
+                let user = await UserController.get({
                     id: null,
                     username: username,
-                }).catch(err => {
-                    console.log('catch', err);
                 });
-
 
                 if (user && user.password) {
                     if ( ! await bcrypt.compare(password, user.password) ) {
@@ -42,8 +39,7 @@ module.exports = {
                 } else if (login && user) {
                     // if there is previous login, update it
                     const newToken = 
-                        await LoginController.updateToken(login.accessToken)
-                            .catch(err => console.log(err));
+                        await LoginController.updateToken(login.accessToken);
                     if (newToken) {
                         login.accessToken = newToken;
                     } else {

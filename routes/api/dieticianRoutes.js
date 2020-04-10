@@ -23,7 +23,12 @@ router.route('/')
                     .send(JSON.stringify({errors: errorObj}));
             });
         } else {
-            const { error, searchQuery, expertiseIds } = getDieticiansQueryParser(req.query);
+            const { 
+                error, 
+                searchQuery, 
+                expertiseIds, 
+                showPengind 
+            } = getDieticiansQueryParser(req.query);
 
             if (error)
                 return res.status(400)
@@ -32,7 +37,8 @@ router.route('/')
             dieticianController
                 .getFiltered({
                     query: searchQuery,
-                    expertiseIds: expertiseIds
+                    expertiseIds: expertiseIds,
+                    showPengind: showPengind
                 }).then((result) => {
                     res.send(JSON.stringify(result));
                 }).catch((err) => {

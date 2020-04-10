@@ -28,8 +28,10 @@ module.exports = {
             });
         });
     },
-    getFiltered: ({ query, expertiseIds }) => {
-        let expertiseWheres = {};
+    getFiltered: ({ query, expertiseIds, showPengind }) => {
+        let expertiseWheres = {
+            isPending: showPengind,
+        };
 
         if (expertiseIds && expertiseIds.length > 0) {
             let idWheres = [];

@@ -10,7 +10,7 @@ const get = ({dieticianId, customerId, startDate, endDate, includeIdAndCustomerD
     const wheres = generateWheres(startDate, endDate, dieticianId, customerId);
     const includes = generateIncludes(includeIdAndCustomerDetails);
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         if (! dieticianId && ! customerId) {
             return reject(400);
         } else {
@@ -38,7 +38,7 @@ module.exports = {
     get: get,
 
     getOne: ({id, includeDietician, includeIdAndCustomerDetails}) => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             if (id) {
                 const includes = generateIncludes(includeDietician, includeCustomer);
                 let attributes = ['startsAt', 'endsAt'];
@@ -97,7 +97,7 @@ module.exports = {
     },
 
     update: (updatedBooking) => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 return resolve(
                     await model.update({
@@ -112,7 +112,7 @@ module.exports = {
     },
 
     delete: (id) => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 const result = 
                     await model.destroy({ where: { id: id } });

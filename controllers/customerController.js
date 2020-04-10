@@ -2,7 +2,7 @@ const model = require('../models/customer');
 
 module.exports = {
     getAll: () => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 resolve(
                     await model.findAll({attributes: ['id', 'name', 'email']})
@@ -18,7 +18,7 @@ module.exports = {
         if (name) wheres.name = name;
         if (email) wheres.email = email;
 
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             if (id || name || email) {
                 try {   
                     const result = 
@@ -44,7 +44,7 @@ module.exports = {
     },
 
     create: ({name, email}) => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 const result = await model.create({name: name, email: email});
                 resolve({
@@ -59,7 +59,7 @@ module.exports = {
     },
 
     update: ({id, name, email}) => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 let result = 
                     await model.update({name: name, email: email}, { where: { id: id } });
@@ -81,7 +81,7 @@ module.exports = {
     },
 
     delete: (id) => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 const result = await model.destroy({ where: { id: id } });
                 if (result == 1)

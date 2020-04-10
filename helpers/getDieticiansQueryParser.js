@@ -1,14 +1,12 @@
 const GetDieticiansQueryParser = (query) => {
     try {
-        const expertiseIds = 
-        query.expertises
-        ? JSON.parse(query.expertises)
-        : [];
+        const expertiseIds = query.expertises
+            ? JSON.parse(query.expertises)
+            : [];
 
-        const searchQuery = 
-            query.query
-            ? query.query
-            : "";
+        const searchQuery = query.query ? query.query : "";
+
+        const showPengind = query.isPengind ? true : false;
 
         if (typeof searchQuery != 'string')
             return { error: "Search query must be a string" };
@@ -21,7 +19,7 @@ const GetDieticiansQueryParser = (query) => {
                 return { error: "Expertises must be an array of integers" };
         });
 
-        return { searchQuery, expertiseIds };
+        return { searchQuery, expertiseIds, showPengind };
     } catch {
         return { error: "Invalid query params" };
     }

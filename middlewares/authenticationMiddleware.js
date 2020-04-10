@@ -38,17 +38,24 @@ module.exports = async (req, res, next) => {
 
     // if token is updated over an hour ago, it is expired and it is not valid
     if ( moment().isAfter(lastMomentToUseToken.format('YYYY-MM-DD HH:mm')) ) {
-        return res
-            .status(401)
+        res.status(401)
             .send({
                 errors: {
                     accesstoken: 'Invalid access token'
                 }
             });
+
+        
+        await LoginController.delete({
+            userId: null,
+            token: token
+        });
+
+        return;
     }
 
 
-    LoginController.updateTimestampOnly(token);
+    await LoginController.updateTimestampOnly(token);
 
     const user = 
         await UserController.get({

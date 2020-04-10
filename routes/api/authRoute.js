@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const AuthenticationController = require('../../controllers/authenticationController');
+const AuthenticationMiddleware = require('../../middlewares/authenticationMiddleware');
 
 router.route('/')
     .post(async (req, res) => {
@@ -16,6 +17,20 @@ router.route('/')
         } catch (error) {
             return res.sendStatus(401);
         }
+    })
+    .delete(AuthenticationMiddleware, async (req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+
+        const auth = req.authentication;
+
+        if (! auth)
+            return res.sendStatus(200);
+
+        try {
+            await AuthenticationController.logout(req.authentication.accesstoken);
+        } catch (err) { console.log(err); }
+
+        return res.sendStatus(200);
     });
 
 module.exports = router;

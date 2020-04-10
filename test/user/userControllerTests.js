@@ -23,8 +23,7 @@ describe('User controller', async () => {
     });
 
     describe('create', () => {
-        it('should create with correct infromation without problems', async () => {
-            console.log(dieticianUsername, firstPwd, dieticianId);
+        it('should create with correct information without problems', async () => {
             dieticianUser = 
                 await userController.create({
                     username: dieticianUsername,

@@ -11,7 +11,7 @@ const name = "Tero Testeri";
 const modifiedName = "Mikko Testeri";
 const education = "Koulu";
 const place = "Kuopio";
-const email = "tero@mail.com";
+const email = "tero.testeri@mail.com";
 const phone = "123456";
 const imageUrl = "https://freesvg.org/img/1316090534.png";
 const isPending = true;
@@ -45,6 +45,8 @@ describe('Dietician controller', () => {
                     testing: true
                 });
         });
+
+        console.log('tests ', createdDietician);
 
         it('name and email should match', () => {
             assert.equal(createdDietician.name, name, "name does not match");
@@ -98,8 +100,10 @@ describe('Dietician controller', () => {
             modifiedDietician = 
                 await dieticianController.update({
                     id: createdDietician.id,
-                    name: modifiedName,
-                    email: createdDietician.email
+                    updateObj: {
+                        name: modifiedName,
+                        email: createdDietician.email
+                    }
                 });
         }); 
         it('name should not be same anymore', () => {

@@ -21,11 +21,6 @@ app.use(function (req, res, next) {
 	next();
 });
 
-app.use('/', async (req, res, next) => {
-	console.log(req.query, req.body);
-	next();
-});
-
 app.use("/", router);
 
 app.listen(PORT, HOSTNAME, () => {

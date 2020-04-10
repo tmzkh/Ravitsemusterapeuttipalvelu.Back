@@ -1,5 +1,6 @@
 const UserController = require('./userController');
 const LoginController = require('./loginController');
+const DieticianController = require('./dieticianController');
 
 const bcrypt = require('bcrypt');
 
@@ -74,5 +75,38 @@ module.exports = {
                 reject(error);
             }
         });
-    } 
+    },
+
+    register: async (body) => {
+        return new Promise(async (resolve, reject) => {
+            let dieticianId = null;
+            let userId = null;
+            try {
+                const dietician = await DieticianController.create(body);
+                dieticianId = dietician.id;
+                const user = 
+                    await UserController.create({
+                        username: dietician.email,
+                        password: body.password,
+                        dieticianId: dietician.id,
+                        roleId: 2
+                    });
+                userId = user.id;
+                resolve({
+                    user: {
+                        username: user.username
+                    },
+                    dietician: dietician
+                });
+            } catch (e) {
+                reject(e);
+                try {
+                    await DieticianController.delete(dieticianId);
+                    await UserController.delete(userId);
+                } catch (er) {
+                    console.log('registration, tried to delete created entities', er);
+                }
+            }
+        });
+    }
 }

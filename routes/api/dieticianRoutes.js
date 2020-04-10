@@ -121,8 +121,7 @@ router.route('/:id', )
                     return res.status(400)
                             .send(JSON.stringify({errors: errorObj}));
                 }
-                res.status(500)
-                    .send();
+                res.status(500).send();
             });
     })
     .delete(async (req, res) => {

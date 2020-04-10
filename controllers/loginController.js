@@ -57,5 +57,16 @@ module.exports = {
             
             return reject();
         });
+    },
+    delete: async ({userId, token}) => {
+        return new Promise(async (resolve, reject) => {
+            const where = wheres({userId, token});
+            const result = 
+                await Login.destroy({ where: where });
+            if (result == 1) {
+                resolve();
+            }
+            reject(404);
+        });
     }
 };

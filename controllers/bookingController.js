@@ -124,13 +124,7 @@ generateIncludes = (includeCustomer) => {
     if (includeCustomer) {
         includes.push({
             model: Customer, 
-            attributes: ['id'],
-        });
-    }
-    if (includeCustomer) {
-        includes.push({
-            model: Customer, 
-            attributes: ['id'],
+            attributes: ['id', 'name', 'email'],
         });
     }
     return includes;

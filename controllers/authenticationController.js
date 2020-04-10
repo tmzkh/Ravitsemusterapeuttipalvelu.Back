@@ -9,7 +9,7 @@ module.exports = {
     login: async ({username, password}) => {
         return new Promise(async (resolve, reject) => {
             // fetch user from db
-            const user = 
+            let user = 
                 await UserController.get({
                     id: null,
                     username: username,
@@ -46,17 +46,24 @@ module.exports = {
                 if (newToken) {
                     login.accessToken = newToken;
                 } else {
-                    login.accessToken;
+                    login.accessToken = null;
                 }
             }
 
             if (login) {
                 return resolve({
                     AccessToken: login.accessToken,
-                    TTL: 3600
+                    TTL: 3600,
+                    dieticianId: user.dieticianId
                 });
             }
             return reject(401);
         });
-    }
+    },
+
+    logout: async (token) => {
+        return new Promise(async (resolve, reject) => {
+
+        });
+    } 
 }

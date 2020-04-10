@@ -4,18 +4,18 @@ const AuthenticationController = require('../../controllers/authenticationContro
 router.route('/')
     .post(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
-
         if (! req.body.username || ! req.body.password)
             return res.sendStatus(400);
-
-        await AuthenticationController.login({
-            username: req.body.username,
-            password: req.body.password
-        }).then((result) => {
+        try {
+            const result = 
+                await AuthenticationController.login({
+                    username: req.body.username,
+                    password: req.body.password
+                });
             return res.status(200).send(JSON.stringify(result));
-        }).catch((err) => {
-            return res.status(401).send(err);
-        });
+        } catch (error) {
+            return res.sendStatus(401);
+        }
     });
 
 module.exports = router;

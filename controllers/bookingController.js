@@ -12,22 +12,24 @@ const get = ({dieticianId, customerId, startDate, endDate, includeIdAndCustomerD
 
     return new Promise((resolve, reject) => {
         if (! dieticianId && ! customerId) {
-            reject(400);
+            return reject(400);
         } else {
             let attributes = ['startsAt', 'endsAt'];
             if (includeIdAndCustomerDetails) {
                 attributes.unshift('id');
                 attributes.push('description');
             }
-            model.findAll({ 
-                attributes: attributes,
-                include: includes,
-                where: wheres
-            }).then((result) => {
-                resolve(result);
-            }).catch((err) => {
+            try {
+                return resolve(
+                    await model.findAll({ 
+                            attributes: attributes,
+                            include: includes,
+                            where: wheres
+                        })
+                );
+            } catch (err) {
                 reject(err);
-            });
+            }
         }
     });
 };
@@ -44,14 +46,16 @@ module.exports = {
                     attributes.unshift('id');
                     attributes.push('description');
                 }
-                model.findByPk(id, { 
-                    attributes: attributes,
-                    include: includes,
-                }).then((result) => {
-                    resolve(result);
-                }).catch((err) => {
-                    reject(err);
-                });
+                try {
+                    resolve(
+                        await model.findByPk(id, { 
+                            attributes: attributes,
+                            include: includes,
+                        })
+                    );
+                } catch(e) {
+                    reject(e);
+                }
             } else {
                 reject(400);
             }
@@ -70,17 +74,19 @@ module.exports = {
                 });
 
             if ( bookings.length == 0) {
-                return model.create({
-                    customerId: newBooking.customerId,
-                    dieticianId: newBooking.dieticianId,
-                    startsAt: newBooking.startsAt,
-                    endsAt: newBooking.endsAt,
-                    description: newBooking.description,
-                }).then((result) => {
-                    resolve(result);
-                }).catch((err) => {
-                    reject(err);
-                });
+                try {
+                    return resolve(
+                        await model.create({
+                            customerId: newBooking.customerId,
+                            dieticianId: newBooking.dieticianId,
+                            startsAt: newBooking.startsAt,
+                            endsAt: newBooking.endsAt,
+                            description: newBooking.description,
+                        })
+                    );
+                } catch (e) {
+                    reject(e);
+                }
             }
             reject({
                 errors: {
@@ -92,29 +98,30 @@ module.exports = {
 
     update: (updatedBooking) => {
         return new Promise((resolve, reject) => {
-            return model.update({
-                startsAt: updatedBooking.startsAt,
-                endsAt: updatedBooking.endsAt,
-            }, {where: {id: updatedBooking.id}})
-            .then((result) => {
-                resolve(result);
-            }).catch((err) => {
-                reject(err);
-            });
+            try {
+                return resolve(
+                    await model.update({
+                            startsAt: updatedBooking.startsAt,
+                            endsAt: updatedBooking.endsAt,
+                        }, {where: {id: updatedBooking.id}})
+                );
+            } catch (e) {
+                reject(e);
+            }
         });
     },
 
     delete: (id) => {
         return new Promise((resolve, reject) => {
-            model
-                .destroy({ where: { id: id } })
-                .then((result) => {
-                    if (result == 1)
-                        resolve();
-                    resolve(404);
-                }).catch((err) => {
-                    reject(err);
-                });
+            try {
+                const result = 
+                    await model.destroy({ where: { id: id } });
+                if (result == 1)
+                    resolve();
+                resolve(404);
+            } catch (e) {
+                reject(e);
+            }
         });
     }
 };

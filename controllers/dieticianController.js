@@ -6,6 +6,39 @@ const Sequelize = require('sequelize');
 
 const Op = Sequelize.Op
 
+const getOne = async ({ id, name, email }) => {
+    let wheres = {};
+    if (id) wheres.id = id;
+    if (name) wheres.name = name;
+    if (email) wheres.email = email;
+    return new Promise((resolve, reject) => {
+        if (id || name || email) {
+            model
+                .findOne({
+                    attributes: ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'],
+                    include: {
+                        model: expertiseModel,
+                        attributes: ['id'],
+                        through: {
+                            attributes: []
+                        }
+                    },
+                    where: wheres
+                }).then((result) => {
+                    if (!result) {
+                        resolve(404);
+                    } else {
+                        resolve(result);
+                    }
+                }).catch((err) => {
+                    reject(err);
+                });
+        } else {
+            reject(err);
+        }
+    });
+};
+
 module.exports = {
     getAll: () => {
         return new Promise((resolve, reject) => {
@@ -85,38 +118,7 @@ module.exports = {
         });
 
     },
-    getOne: ({ id, name, email }) => {
-        let wheres = {};
-        if (id) wheres.id = id;
-        if (name) wheres.name = name;
-        if (email) wheres.email = email;
-        return new Promise((resolve, reject) => {
-            if (id || name || email) {
-                model
-                    .findOne({
-                        attributes: ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'],
-                        include: {
-                            model: expertiseModel,
-                            attributes: ['id'],
-                            through: {
-                                attributes: []
-                            }
-                        },
-                        where: wheres
-                    }).then((result) => {
-                        if (!result) {
-                            resolve(404);
-                        } else {
-                            resolve(result);
-                        }
-                    }).catch((err) => {
-                        reject(err);
-                    });
-            } else {
-                reject(err);
-            }
-        });
-    },
+    getOne: getOne,
 
     create: ({ name, education, place, email, phone, imageUrl, testing }) => {
         return new Promise((resolve, reject) => {
@@ -146,44 +148,18 @@ module.exports = {
         });
     },
 
-    update: ({ id, name, education, place, email, phone, imageUrl, isPending }) => {
-        return new Promise((resolve, reject) => {
-            model
-                .update({
-                    name: name,
-                    education: education,
-                    place: place,
-                    email: email,
-                    phone: phone,
-                    imageUrl: imageUrl,
-                    isPending: isPending
-                }, { where: { id: id } })
-                .then((result) => {
-                    if (result == 1) {
-                        return model
-                            .findOne({
-                                attributes: ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'],
-                                include: {
-                                    model: expertiseModel,
-                                    attributes: ['id'],
-                                    through: {
-                                        attributes: []
-                                    }
-                                },
-                                where: { id: id }
-                            })
-                    }
-                    resolve(404);
-                }).then(result => {
-                    if (typeof (result) != 'undefined') {
-                        resolve(result);
-                    } else {
-                        resolve(404);
-                    }
-                })
-                .catch((err) => {
-                    reject(err);
-                });
+    update: ({ id, updateObj }) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await model.update(updateObj, {where:{id:id}});
+                if (result == 1) {
+                    const updatedDietician = await getOne({id: id});
+                    return resolve(updatedDietician);
+                }
+                resolve(404);
+            } catch (e) {
+                reject(e);
+            }
         });
     },
 

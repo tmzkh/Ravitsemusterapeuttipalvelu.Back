@@ -52,30 +52,30 @@ router.route('/')
                     res.send(JSON.stringify(err));
                 });
         }
-    })
-    .post(async (req, res) => {
-        dieticianController
-            .create(req.body)
-            //console.log(req.body)
-            .then((result) => {
-                res.setHeader('Content-Type', 'application/json');
-                res
-                .status(201)
-                .send(JSON.stringify(result));
-            }).catch(err => {
-                let errorObj = {};
-                res.setHeader('Content-Type', 'application/json');
-                if (err.name && (err.name === 'SequelizeValidationError' || 
-                    err.name === 'SequelizeUniqueConstraintError')) {
-                    err.errors.forEach(er => {
-                        errorObj[er.path] = er.message;
-                    });
-                    return res.status(400)
-                            .send(JSON.stringify({errors: errorObj}));
-                }
-                res.status(500).send("asd");
-            });
     });
+    // .post(async (req, res) => {
+    //     dieticianController
+    //         .create(req.body)
+    //         //console.log(req.body)
+    //         .then((result) => {
+    //             res.setHeader('Content-Type', 'application/json');
+    //             res
+    //             .status(201)
+    //             .send(JSON.stringify(result));
+    //         }).catch(err => {
+    //             let errorObj = {};
+    //             res.setHeader('Content-Type', 'application/json');
+    //             if (err.name && (err.name === 'SequelizeValidationError' || 
+    //                 err.name === 'SequelizeUniqueConstraintError')) {
+    //                 err.errors.forEach(er => {
+    //                     errorObj[er.path] = er.message;
+    //                 });
+    //                 return res.status(400)
+    //                         .send(JSON.stringify({errors: errorObj}));
+    //             }
+    //             res.status(500).send("asd");
+    //         });
+    // })
 
 router.route('/:id', )
     .get(async (req, res) => {
@@ -96,33 +96,56 @@ router.route('/:id', )
             });
     })
     .put(async (req, res) => {
-        if (!checkIfIdIsUuid(req, res)) return;
+
         res.setHeader('Content-Type', 'application/json');
-        dieticianController
-            .update({
-                id: req.params.id,
-                name: req.body.name,
-                email: req.body.email
-            }).then((result) => {
-                if (result === 404) {
-                    return res.sendStatus(404);
-                }
-                res.status(200)
-                    .send(JSON.stringify(result));
-            }).catch((err) => {
-                console.log("tulee routen catchiin");
-                //console.error(err);
-                let errorObj = {};
-                if (err.name && (err.name === 'SequelizeValidationError' || 
-                    err.name === 'SequelizeUniqueConstraintError')) {
-                    err.errors.forEach(er => {
-                        errorObj[er.path] = er.message;
-                    });
-                    return res.status(400)
-                            .send(JSON.stringify({errors: errorObj}));
-                }
-                res.status(500).send();
-            });
+
+        // get authentication object from request (inserted in authentication middleware)
+        const auth = req.authentication;
+
+        if (! auth || ! auth.role) {
+            return res.sendStatus(401);
+        }
+
+        let updateObj = {};
+
+        if (auth.role == 'admin') {
+            if (req.body.isPending) updateObj.isPending = req.body.isPending;
+        } else if (auth.role == 'dietician' && auth.dieticianId == req.params.id) {
+            if (req.body.name) updateObj.name = req.body.name;
+            if (req.body.education) updateObj.education = req.body.education;
+            if (req.body.place) updateObj.place = req.body.place;
+            // if (req.body.email) updateObj.email = req.body.email;
+            if (req.body.phone) updateObj.phone = req.body.phone;
+            if (req.body.imageUrl) updateObj.imageUrl = req.body.imageUrl;
+        } else {
+            return res.sendStatus(401);
+        }
+
+        try {
+            const result = 
+                await dieticianController.update({
+                    id: req.params.id, 
+                    updateObj: updateObj
+                });
+            if (result === 404) {
+                return res.sendStatus(404);
+            }
+            res.status(200)
+                .send(JSON.stringify(result));
+        } catch (error) {
+            console.log("tulee routen catchiin");
+            //console.error(err);
+            let errorObj = {};
+            if (err.name && (err.name === 'SequelizeValidationError' || 
+                err.name === 'SequelizeUniqueConstraintError')) {
+                err.errors.forEach(er => {
+                    errorObj[er.path] = er.message;
+                });
+                return res.status(400)
+                        .send(JSON.stringify({errors: errorObj}));
+            }
+            res.status(500).send();
+        }
     })
     .delete(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');

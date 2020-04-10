@@ -1,6 +1,7 @@
 
 const User = require('../models/user');
 const Dietician = require('../models/dietician');
+const Role = require('../models/role');
 const bcrypt = require('bcrypt');
 
 
@@ -88,15 +89,22 @@ const generateWheres = ({id, username}) => {
 };
 
 const generateIncludes = (id) => {
+    let includes = [];
+
+    includes.push({
+        model: Role,
+        attributes: ['id', 'name'],
+    });
+
     if (id) {
-        return [{
+        includes.push({
             model: Dietician,
             attributes: ['id'],
             as: 'dietician',
             required: false
-        }];
+        });
     }
-    return [];
+    return includes;
 };
 
 module.exports = {

@@ -68,7 +68,7 @@ const User = db.define('user', {
     updatedAt: Sequelize.DATE,
 }, {timestamps: true});
 
-User.hasOne(Role, {foreignKey: 'roleId'});
+User.belongsTo(Role, {foreignKey: 'roleId'});
 User.belongsTo(Dietician, {foreignKey: 'dieticianId'});
 
 module.exports = User;

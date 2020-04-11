@@ -74,6 +74,7 @@ module.exports = async (req, res, next) => {
         req.authentication = {
             accesstoken: token,
             userId: user.id,
+            username: user.username,
             role: user.role.name,
             dieticianId: user.dietician 
                 ? user.dietician.id

@@ -59,8 +59,8 @@ const update = ({id, username, password}) => {
                 }, 
                 { where: { id: id } });
             if (result == 1)
-                resolve(await get({id: id, username: null}));
-            reject(404);
+                return resolve(await get({id: id, username: null}));
+            resolve(404);
         } catch (error) {
             reject(error);
         }
@@ -73,7 +73,7 @@ const deleteUser = (id) => {
             const result = 
                 await User.destroy({ where: { id: id } });
                 if (result == 1)
-                    resolve();
+                    return resolve();
                 resolve(404);
         } catch (error) {
             reject(error);

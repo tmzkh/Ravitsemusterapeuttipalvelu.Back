@@ -55,29 +55,6 @@ router.route('/')
                 });
         }
     });
-    // .post(async (req, res) => {
-    //     dieticianController
-    //         .create(req.body)
-    //         //console.log(req.body)
-    //         .then((result) => {
-    //             res.setHeader('Content-Type', 'application/json');
-    //             res
-    //             .status(201)
-    //             .send(JSON.stringify(result));
-    //         }).catch(err => {
-    //             let errorObj = {};
-    //             res.setHeader('Content-Type', 'application/json');
-    //             if (err.name && (err.name === 'SequelizeValidationError' || 
-    //                 err.name === 'SequelizeUniqueConstraintError')) {
-    //                 err.errors.forEach(er => {
-    //                     errorObj[er.path] = er.message;
-    //                 });
-    //                 return res.status(400)
-    //                         .send(JSON.stringify({errors: errorObj}));
-    //             }
-    //             res.status(500).send("asd");
-    //         });
-    // })
 
 router.route('/:id', )
     .get(async (req, res) => {

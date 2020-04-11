@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const customerModel = require('../../models/customer');
+const customerModel = require('../../../models/customer');
 
 let createdCustomer = {};
 const name = "Tommi";

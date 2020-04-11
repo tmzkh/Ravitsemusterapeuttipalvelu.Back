@@ -1,6 +1,6 @@
 'use strict';
 
-const knownEntities = require('./helpers/knownEntities');
+const knownEntities = require('../helpers/knownEntities');
 
 module.exports = {
   up: (queryInterface, Sequelize) => {

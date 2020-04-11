@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const expertiseController = require('../../controllers/expertiseController');
+const expertiseController = require('../../../controllers/expertiseController');
 
 let exs;
 

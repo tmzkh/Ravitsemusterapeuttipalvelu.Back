@@ -23,6 +23,6 @@ app.use(function (req, res, next) {
 
 app.use("/", router);
 
-app.listen(PORT, HOSTNAME, () => {
+module.exports = app.listen(PORT, HOSTNAME, () => {
 	console.log(`Server running AT http://${HOSTNAME}:${PORT}/`);
 });

@@ -1,7 +1,7 @@
 'use strict';
 
 const faker = require('faker');
-const knownEntities = require('./helpers/knownEntities');
+const knownEntities = require('../helpers/knownEntities');
 
 module.exports = {
   up: (queryInterface, Sequelize) => {

@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 
 const { assert } = require('chai');
 
-const dieticianController = require('../../controllers/dieticianController');
+const dieticianController = require('../../../controllers/dieticianController');
 
 let createdDietician = {};
 const name = "Tero Testeri";

@@ -1,8 +1,8 @@
 
 const { assert } = require('chai');
 
-const userController = require('../../controllers/userController');
-const dieticianModel = require('../../models/dietician');
+const userController = require('../../../controllers/userController');
+const dieticianModel = require('../../../models/dietician');
 
 const bcrypt = require('bcrypt');
 

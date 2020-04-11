@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const dieticianModel = require('../../models/dietician');
+const dieticianModel = require('../../../models/dietician');
 
 let createdDietician = {};
 const name = "Tero";

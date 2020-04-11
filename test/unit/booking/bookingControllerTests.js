@@ -1,7 +1,7 @@
 const { assert } = require('chai');
-const bookingController = require('../../controllers/bookingController');
-const dieticianModel = require('../../models/dietician');
-const customerModel = require('../../models/customer');
+const bookingController = require('../../../controllers/bookingController');
+const dieticianModel = require('../../../models/dietician');
+const customerModel = require('../../../models/customer');
 const Sequelize = require('sequelize');
 let exs;
 

@@ -14,7 +14,7 @@ const db = require('../config/database')({
 const DieticianExpertise = db.define('dietician_expertise', 
     { 
 
-    }, { timestamps: false });
+    }, { timestamps: false, tableName: 'dietician_expertise' });
 
 Dietician.belongsToMany(Expertise, {through: 'dietician_expertise'});
 Expertise.belongsToMany(Dietician, {through: 'dietician_expertise'});

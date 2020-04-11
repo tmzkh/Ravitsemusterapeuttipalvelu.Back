@@ -15,6 +15,7 @@ module.exports = {
                 }
                 resolve(404);
             } catch (e) {
+                console.log('dieticianExpertiseController clearAll catch', e);
                 reject(e);
             }
         });
@@ -25,15 +26,16 @@ module.exports = {
             try {
                 const dietician = await Dietician.findByPk(dieticianId);
                 if (dietician) {
-                    expertisesArr.forEach(ex => {
-                        const expertise = await Expertise.findByPk(ex);
+                    for (let i = 0; i < expertisesArr.length; i++) {
+                        const expertise = await Expertise.findByPk(expertisesArr[i]);
                         if (expertise) {
-                            dietician.addExpertise(expertise);
+                            await dietician.addExpertise(expertise);
                         }
-                    });
+                    }
                 }
-
+                return resolve(200);
             } catch (e) {
+                console.log('dieticianExpertiseController add arr catch', e);
                 reject(e);
             }
         });

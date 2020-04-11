@@ -47,7 +47,7 @@ router.route('/')
                 .getFiltered({
                     query: searchQuery,
                     expertiseIds: expertiseIds,
-                    showPengind: showPengind
+                    showPengind: auth.role == 'admin' ? true && showPengind : false
                 }).then((result) => {
                     res.send(JSON.stringify(result));
                 }).catch((err) => {
@@ -83,8 +83,23 @@ router.route('/:id', )
     .get(async (req, res) => {
         if (!checkIfIdIsUuid(req, res)) return;
         res.setHeader('Content-Type', 'application/json');
+
+        const auth = req.authentication;
+        let includeIsPending = false;
+
+        if (auth && auth.role) {
+            if (auth.role == 'admin') {
+                includeIsPending = true;
+            } else if (auth.dieticianId == req.params.id) {
+                includeIsPending = true;
+            }
+        }
+
         dieticianController
-            .getOne({id: req.params.id})
+            .getOne({
+                id: req.params.id,
+                includeIsPending: includeIsPending
+            })
             .then((result) => {
                 if (result === 404) {
                     return res.sendStatus(404);
@@ -108,8 +123,19 @@ router.route('/:id', )
             return res.sendStatus(401);
         }
 
-        let { updateObj } = updateRequestFormatter({ auth: auth, body: req.body });
+        // move id to body object
+        req.body.id = req.params.id;
+
+        let { error, updateObj } = updateRequestFormatter({ auth: auth, body: req.body });
         let expertises;
+
+        if (error) {
+            if (error == 'unauthorized') {
+                return res.sendStatus(401);
+            } else {
+                return res.status(400).send(JSON.stringify(error));
+            }
+        }
 
         if (updateObj.expertises) {
             expertises = updateObj.expertises;
@@ -117,7 +143,8 @@ router.route('/:id', )
         }
 
         try {
-            const result = 
+            // update dietician entity
+            let result = 
                 await dieticianController.update({
                     id: req.params.id, 
                     updateObj: updateObj
@@ -127,20 +154,28 @@ router.route('/:id', )
                 return res.sendStatus(404);
             }
 
+            // if request contains expertises array
             if (expertises) {
+                // first clear old ones
                 let exResult = 
                     await dieticianExpertiseController.clearAll(req.params.id);
-                    
+                
+                // then add new array of expertises
+                exResult = 
+                    await dieticianExpertiseController.addArr({
+                        dieticianId: req.params.id,
+                        expertisesArr: expertises
+                    });
+                
                 if (exResult === 404) {
                     return res.sendStatus(404);
                 }
+                // fetch final updated entity (with updated expertises)
+                result = await dieticianController.getOne({id: req.params.id});
             }
 
-            res.status(200)
-                .send(JSON.stringify(result));
-        } catch (error) {
-            console.log("tulee routen catchiin");
-            //console.error(err);
+            res.status(200).send(JSON.stringify(result));
+        } catch (err) {
             let errorObj = {};
             if (err.name && (err.name === 'SequelizeValidationError' || 
                 err.name === 'SequelizeUniqueConstraintError')) {

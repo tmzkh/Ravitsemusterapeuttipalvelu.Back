@@ -6,16 +6,21 @@ const Sequelize = require('sequelize');
 
 const Op = Sequelize.Op
 
-const getOne = async ({ id, name, email }) => {
+const getOne = async ({ id, name, email, includeIsPending }) => {
     let wheres = {};
     if (id) wheres.id = id;
     if (name) wheres.name = name;
     if (email) wheres.email = email;
+
+    let attributes = ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'];
+
+    if (includeIsPending) attributes.push('isPending');
+
     return new Promise((resolve, reject) => {
         if (id || name || email) {
             model
                 .findOne({
-                    attributes: ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'],
+                    attributes: attributes,
                     include: {
                         model: expertiseModel,
                         attributes: ['id'],

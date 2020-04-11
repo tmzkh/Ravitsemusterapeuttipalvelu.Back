@@ -3,8 +3,8 @@ module.exports = (expertisesArr) => {
         let expertises = [];
         for (let index = 0; index < expertisesArr.length; index++) {
             const expertise = expertisesArr[index];
-            if (expertise.id && Number.isInteger(expertise.id)) {
-                expertises.push(expertise.id);
+            if (Number.isInteger(expertise)) {
+                expertises.push(expertise);
             } else {
                 return { error: "Invalid expertises array" };
             }

@@ -1,47 +1,39 @@
-const chai = require('chai');
+// const chai = require('chai');
 
-const { assert } = chai;
+// const { assert } = chai;
 
-const chaiHttp = require('chai-http');
-const CustomerModel = require('../../../models/customer');
+// const chaiHttp = require('chai-http');
+// const CustomerModel = require('../../../models/customer');
 
-chai.use(chaiHttp);
+// chai.use(chaiHttp);
 
-const server = require('../../../server');
-const should = chai.should();
+// const server = require('../../../server');
+// const should = chai.should();
 
-process.env.NODE_ENV = 'test';
+// process.env.NODE_ENV = 'test';
 
-let custId;
+// let custId;
 
-describe('GET /customers', async () => {
-    beforeEach(async () => {
-        const customer = await CustomerModel.create({
-            name: "Tommi Testeri",
-            email: "tommi.testeri@email.com"
-        });
-        custId = customer.id;
-    });
+// describe('GET /customers', async () => {
+//     beforeEach(async () => {
+//         const customer = await CustomerModel.create({
+//             name: "Tommi Testeri",
+//             email: "tommi.testeri@email.com"
+//         });
+//         custId = customer.id;
+//     });
 
-    afterEach(async () => {
-        await CustomerModel.destroy({where:{id:custId}});
-    });
+//     afterEach(async () => {
+//         await CustomerModel.destroy({where:{id:custId}});
+//     });
 
-    it('it should GET all customers', async () => {
-        const response = await chai.request(server).get('/api/customers/').send();
-        console.log(response.body);
+//     it('it should GET all customers', async () => {
+//         const response = await chai.request(server).get('/api/customers/').send();
+//         console.log(response.body);
 
-        assert.equal(response.status, 200);
-        assert.isTrue(Array.isArray(response.body));
+//         assert.equal(response.status, 200);
+//         assert.isTrue(Array.isArray(response.body));
 
+//     });
 
-        // chai.request(server).get('/api/customers/')
-        //     .end((err, res) => {
-        //         res.should.have.status(200);
-        //         res.body.should.be.a('array');
-        //         res.body.length.should.not.equal(0);
-        //         done();
-        //     });
-    });
-
-});
+// });

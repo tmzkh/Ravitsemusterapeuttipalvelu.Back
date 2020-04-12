@@ -32,6 +32,9 @@ router.route('/')
                         .send(JSON.stringify({errors: errorObj}));
                 });
         } else {
+
+            const auth = req.authentication;
+
             const { 
                 error, 
                 searchQuery, 
@@ -47,7 +50,7 @@ router.route('/')
                 .getFiltered({
                     query: searchQuery,
                     expertiseIds: expertiseIds,
-                    showPengind: auth.role == 'admin' ? true && showPengind : false
+                    showPengind: (auth && auth.role == 'admin') ? true && showPengind : false
                 }).then((result) => {
                     res.send(JSON.stringify(result));
                 }).catch((err) => {

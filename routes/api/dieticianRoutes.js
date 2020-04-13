@@ -172,6 +172,7 @@ router.route('/:id')
     .delete(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
 
+        // HOX
         const auth = req.authentication;
 
         dieticianController

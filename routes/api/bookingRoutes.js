@@ -127,6 +127,9 @@ router.route('/:id')
  */
     .delete(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
+
+        const auth = req.authentication;
+
         bookingController
             .delete(req.params.id)
             .then((result) => {

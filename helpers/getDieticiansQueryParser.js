@@ -8,7 +8,7 @@ const GetDieticiansQueryParser = (query) => {
 
         console.log(query);
 
-        const showPengind = query.isPending ? true : false;
+        const showPending = query.isPending ? true : false;
 
         if (typeof searchQuery != 'string')
             return { error: "Search query must be a string" };
@@ -21,7 +21,7 @@ const GetDieticiansQueryParser = (query) => {
                 return { error: "Expertises must be an array of integers" };
         });
 
-        return { searchQuery, expertiseIds, showPengind };
+        return { searchQuery, expertiseIds, showPending };
     } catch {
         return { error: "Invalid query params" };
     }

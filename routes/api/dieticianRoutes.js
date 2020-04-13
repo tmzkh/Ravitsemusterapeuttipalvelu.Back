@@ -15,22 +15,22 @@ router.route('/')
         const auth = req.authentication;
 
         if (! req.query.expertises && ! req.query.query && ! req.query.isPending) {
-            dieticianController
-                .getAll()
-                .then((result) => {
-                    res.send(JSON.stringify(result));
-                }).catch((err) => {
-                    //console.error(err);
-                    let errorObj = {};
-                    if (err.errors) {
-                        err.errors.forEach(er => {
-                            errorObj[er.path] = er.message;
-                        });
-                    }
-                    console.log("tulee tänne", err);
-                    res.status(500)
-                        .send(JSON.stringify({errors: errorObj}));
-                });
+            // dieticianController
+            //     .getAll()
+            //     .then((result) => {
+            //         res.send(JSON.stringify(result));
+            //     }).catch((err) => {
+            //         //console.error(err);
+            //         let errorObj = {};
+            //         if (err.errors) {
+            //             err.errors.forEach(er => {
+            //                 errorObj[er.path] = er.message;
+            //             });
+            //         }
+            //         console.log("tulee tänne", err);
+            //         res.status(500)
+            //             .send(JSON.stringify({errors: errorObj}));
+            //     });
         } else {
 
             const auth = req.authentication;
@@ -39,7 +39,7 @@ router.route('/')
                 error, 
                 searchQuery, 
                 expertiseIds, 
-                showPengind 
+                showPending
             } = getDieticiansQueryParser(req.query);
 
             if (error)
@@ -50,7 +50,8 @@ router.route('/')
                 .getFiltered({
                     query: searchQuery,
                     expertiseIds: expertiseIds,
-                    showPengind: (auth && auth.role == 'admin') ? true && showPengind : false
+                    showPending: (auth && auth.role == 'admin') ? (true && showPending) : false,
+                    showPendingValue: (auth && auth.role == 'admin') ? true : false
                 }).then((result) => {
                     res.send(JSON.stringify(result));
                 }).catch((err) => {
@@ -59,7 +60,7 @@ router.route('/')
         }
     });
 
-router.route('/:id', )
+router.route('/:id')
     .get(async (req, res) => {
         if (!checkIfIdIsUuid(req, res)) return;
         res.setHeader('Content-Type', 'application/json');
@@ -170,7 +171,9 @@ router.route('/:id', )
     })
     .delete(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
-        if (!checkIfIdIsUuid(req, res)) return;
+
+        const auth = req.authentication;
+
         dieticianController
             .delete(req.params.id)
             .then((result) => {

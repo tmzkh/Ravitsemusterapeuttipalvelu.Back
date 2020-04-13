@@ -15,7 +15,7 @@ const getOne = async ({ id, name, email, includeIsPending }) => {
     let attributes = ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'];
 
     if (includeIsPending) attributes.push('isPending');
-
+                
     return new Promise((resolve, reject) => {
         if (id || name || email) {
             model
@@ -66,7 +66,7 @@ module.exports = {
             });
         });
     },
-    getFiltered: ({ query, expertiseIds, showPengind }) => {
+    getFiltered: ({ query, expertiseIds, showPending, showPendingValue }) => {
         let expertiseWheres = {};
 
         if (expertiseIds && expertiseIds.length > 0) {
@@ -90,7 +90,7 @@ module.exports = {
                                 [Op.like]: `%${query}%` 
                             }
                         },
-                        isPending: showPengind
+                        isPending: showPending
                     }
                 },
                 include: {
@@ -101,12 +101,17 @@ module.exports = {
             }).each((dietician) => {
                 dieticianIds.push(dietician.id);
             }).then(() => {
+
+                let attributes = ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'];
+
+                if (showPendingValue) attributes.push('isPending');
+
                 // then we can include every expertise
                 return model.findAll({
                         where: {
                             id: dieticianIds
                         },
-                        attributes: ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'],
+                        attributes: attributes,
                         include: {
                             model: expertiseModel,
                             attributes: ['id'],

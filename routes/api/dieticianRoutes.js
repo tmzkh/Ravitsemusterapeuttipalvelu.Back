@@ -15,25 +15,10 @@ router.route('/')
         const auth = req.authentication;
 
         if (! req.query.expertises && ! req.query.query && ! req.query.isPending) {
-            // dieticianController
-            //     .getAll()
-            //     .then((result) => {
-            //         res.send(JSON.stringify(result));
-            //     }).catch((err) => {
-            //         //console.error(err);
-            //         let errorObj = {};
-            //         if (err.errors) {
-            //             err.errors.forEach(er => {
-            //                 errorObj[er.path] = er.message;
-            //             });
-            //         }
-            //         console.log("tulee tänne", err);
-            //         res.status(500)
-            //             .send(JSON.stringify({errors: errorObj}));
-            //     });
+            return res.send(400);
         } else {
 
-            const auth = req.authentication;
+            // const auth = req.authentication;
 
             const { 
                 error, 
@@ -172,10 +157,10 @@ router.route('/:id')
     .delete(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
 
-        // HOX
         const auth = req.authentication;
 
-        dieticianController
+        if (auth && auth.role && auth.role == 'admin') {
+            dieticianController
             .delete(req.params.id)
             .then((result) => {
                 if (result === 404) {
@@ -183,8 +168,12 @@ router.route('/:id')
                 }
                 res.status(204).send("deleted");
             }).catch((err) => {
-                res.status(400).send();
+                return res.status(400).send();
             });
+        }
+
+        return res.sendStatus(401);
+
     });
 
 checkIfIdIsUuid = (req, res) => {

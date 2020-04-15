@@ -33,4 +33,15 @@ router.route('/')
         return res.sendStatus(200);
     });
 
+router.route('/token')
+    .post(AuthenticationMiddleware , async (req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+        const auth = req.authentication;
+
+        if (! auth)
+            return res.sendStatus(401);
+
+        res.sendStatus(200);
+    });
+
 module.exports = router;

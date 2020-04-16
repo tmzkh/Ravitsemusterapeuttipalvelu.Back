@@ -7,9 +7,9 @@ const AuthenticationMiddleware = require('../../middlewares/authenticationMiddle
 router.use(AuthenticationMiddleware);
 
 router.route('/')
-/**
- * GET /api/bookings
- */
+    /**
+     * GET /api/bookings
+     */
     .get(async (req, res) => {
 
         // get authentication object from request (inserted in authentication middleware)
@@ -44,9 +44,9 @@ router.route('/')
         }
 
     })
-/**
- * GET /post/bookings
- */
+    /**
+     * GET /post/bookings
+     */
     .post(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
         try {
@@ -87,9 +87,9 @@ router.route('/')
     });
 
 router.route('/:id')
-/**
- * PUT /api/bookings/{id}
- */
+    /**
+     * PUT /api/bookings/{id}
+     */
     .put(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
 
@@ -122,25 +122,48 @@ router.route('/:id')
             res.sendStatus(500);
         }
     })
-/**
- * DELETE /api/bookings/{id}
- */
+    /**
+     * DELETE /api/bookings/{id}
+     */
     .delete(async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
 
-        // HOX
         const auth = req.authentication;
 
-        bookingController
-            .delete(req.params.id)
-            .then((result) => {
+        try {
+            if (auth && auth.dieticianId) {
+                const result = 
+                    await bookingController.delete({
+                        id: req.params.id,
+                        dieticianId: auth.dieticianId
+                    });
                 if (result === 404) {
                     return res.sendStatus(404);
                 }
-                res.status(204).send("deleted");
-            }).catch((err) => {
-                res.status(400).send();
-            });
+                return res.sendStatus(204);
+            } else if (req.query.email) {
+                const customer = 
+                    await customerController.getOne({
+                        email: req.query.email
+                    });
+                if (customer) {
+                    const result = 
+                        await bookingController.delete({
+                            id: req.params.id,
+                            customerId: customer.id
+                        });
+                    if (result === 404) {
+                        return res.sendStatus(404);
+                    }
+                    return res.sendStatus(204);
+                }
+            }
+            return res.sendStatus(400);
+        } catch (err) {
+            console.log("booking route catch", err);
+            return res.sendStatus(500);
+        }
+
     });
 
 module.exports = router;

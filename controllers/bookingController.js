@@ -111,11 +111,14 @@ module.exports = {
         });
     },
 
-    delete: (id) => {
+    delete: ({id, dieticianId, customerId}) => {
         return new Promise(async (resolve, reject) => {
+            if (!dieticianId && ! customerId) return reject();
+            let wheres = { id: id };
+            if (dieticianId) wheres.dieticianId = dieticianId;
+            else if (customerId) wheres.customerId = customerId;
             try {
-                const result = 
-                    await model.destroy({ where: { id: id } });
+                const result = await model.destroy({ where: wheres });
                 if (result == 1)
                     resolve();
                 resolve(404);

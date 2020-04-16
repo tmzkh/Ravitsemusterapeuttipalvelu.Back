@@ -47,7 +47,6 @@ router.route('/')
 
 router.route('/:id')
     .get(async (req, res) => {
-        if (!checkIfIdIsUuid(req, res)) return;
         res.setHeader('Content-Type', 'application/json');
 
         const auth = req.authentication;
@@ -159,7 +158,7 @@ router.route('/:id')
 
         const auth = req.authentication;
 
-        if (auth && auth.role && auth.role == 'admin') {
+        if (auth && (auth.role == 'admin' || auth.dieticianId == req.params.id)) {
             dieticianController
             .delete(req.params.id)
             .then((result) => {
@@ -175,20 +174,5 @@ router.route('/:id')
         return res.sendStatus(401);
 
     });
-
-checkIfIdIsUuid = (req, res) => {
-    const exp = new RegExp(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
-    if (!exp.test(req.params.id)) {
-        res.setHeader('Content-Type', 'application/json');
-        res.status(400)
-            .send(JSON.stringify({
-                errors: {
-                    id: "Id must be UUID"
-                }
-            }));
-        return false;
-    }
-    return true;
-}
 
 module.exports = router;

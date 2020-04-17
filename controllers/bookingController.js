@@ -12,7 +12,7 @@ const get = ({dieticianId, customerId, startDate, endDate, includeIdAndCustomerD
 
     return new Promise(async (resolve, reject) => {
         if (! dieticianId && ! customerId) {
-            return reject(400);
+            return resolve(400);
         } else {
             let attributes = ['startsAt', 'endsAt'];
             if (includeIdAndCustomerDetails) {
@@ -120,10 +120,10 @@ module.exports = {
             try {
                 const result = await model.destroy({ where: wheres });
                 if (result == 1)
-                    resolve();
-                resolve(404);
+                    return resolve();
+                return resolve(404);
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
         });
     }

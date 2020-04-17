@@ -3,6 +3,8 @@ const bookingController = require('../../controllers/bookingController');
 const customerController = require('../../controllers/customerController');
 const validateGetQuery = require('../../helpers/validateGetBookingQuery');
 const AuthenticationMiddleware = require('../../middlewares/authenticationMiddleware');
+const moment = require('moment');
+const sequelize = require('sequelize');
 
 router.use(AuthenticationMiddleware);
 
@@ -11,7 +13,6 @@ router.route('/')
      * GET /api/bookings
      */
     .get(async (req, res) => {
-
         // get authentication object from request (inserted in authentication middleware)
         const auth = req.authentication;
 
@@ -19,13 +20,12 @@ router.route('/')
 
         // if request is made by dietician, description can be shown
         if (auth && req.query.dieticianId 
-            && auth.dieticianId == req.query.dieticianId) 
-        {
+            && auth.dieticianId == req.query.dieticianId) {
             includeIdAndCustomerDetails = true;
         }
-
-        res.setHeader('Content-Type', 'application/json');
+        // parse request query 
         const { errors, isValid } = validateGetQuery(req.query);
+
         if (isValid) {
             try {
                 const result = await bookingController.get({
@@ -35,11 +35,15 @@ router.route('/')
                     endDate: req.query.endDate,
                     includeIdAndCustomerDetails: includeIdAndCustomerDetails
                 });
+                if (result == 400) {
+                    return res.sendStatus(400);
+                }
                 res.send(JSON.stringify(result));
             } catch (err) {
-                res.send(JSON.stringify(err));
+                res.sendStatus(500);
             }
         } else {
+            // if parsed query had errors, return errors
             res.status(400).send({errors: errors});
         }
 
@@ -48,8 +52,16 @@ router.route('/')
      * GET /post/bookings
      */
     .post(async (req, res) => {
-        res.setHeader('Content-Type', 'application/json');
         try {
+            if (req.body.startsAt) {
+                const sd = moment.utc(req.body.startsAt, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
+                if (sd == 'Invalid date' || moment.utc().isAfter(sd)) {
+                    let errorItem = [];
+                    errorItem.push(new sequelize.ValidationErrorItem("Invalid date time or date time is before present", null, "startsAt"));
+                    throw new sequelize.ValidationError('asdfewqr', errorItem);
+                }
+            }
+
             if (! req.body.customerId) {
                 let customer = 
                     await customerController
@@ -69,8 +81,9 @@ router.route('/')
             }
             const result = 
                 await bookingController.create(req.body);
-            res.status(201).send(JSON.stringify(result));
+            return res.status(201).send(JSON.stringify(result));
         } catch (err) {
+            //console.log(err);
             if (err.name && (err.name === 'SequelizeValidationError' || 
                 err.name === 'SequelizeUniqueConstraintError')) {
                 let errorObj = {};
@@ -82,7 +95,7 @@ router.route('/')
             } else if (err.errors) {
                 return res.status(400).send(JSON.stringify(err.errors));
             }
-            res.sendStatus(500);
+            return res.sendStatus(500);
         }
     });
 
@@ -91,8 +104,6 @@ router.route('/:id')
      * PUT /api/bookings/{id}
      */
     .put(async (req, res) => {
-        res.setHeader('Content-Type', 'application/json');
-
         // get authentication object from request (inserted in authentication middleware)
         const auth = req.authentication;
 
@@ -100,8 +111,7 @@ router.route('/:id')
 
         // if request is made by dietician, description can be shown
         if (auth && req.query.dieticianId 
-            && auth.dieticianId == req.query.dieticianId) 
-        {
+            && auth.dieticianId == req.query.dieticianId) {
             includeDescription = true;
         }
 
@@ -126,8 +136,7 @@ router.route('/:id')
      * DELETE /api/bookings/{id}
      */
     .delete(async (req, res) => {
-        res.setHeader('Content-Type', 'application/json');
-
+        // get authentication object from request (inserted in authentication middleware)
         const auth = req.authentication;
 
         try {
@@ -163,7 +172,6 @@ router.route('/:id')
             console.log("booking route catch", err);
             return res.sendStatus(500);
         }
-
     });
 
 module.exports = router;

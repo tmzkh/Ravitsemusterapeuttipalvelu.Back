@@ -4,11 +4,11 @@ module.exports = {
     getAll: () => {
         return new Promise(async (resolve, reject) => {
             try {
-                resolve(
+                return resolve(
                     await model.findAll({attributes: ['id', 'name', 'email']})
                 );
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
         });
     },
@@ -19,26 +19,25 @@ module.exports = {
         if (email) wheres.email = email;
 
         return new Promise(async (resolve, reject) => {
-            if (id || name || email) {
-                try {   
-                    const result = 
-                        await model.findOne({
-                                attributes: ['id', 'name', 'email'],
-                                where: wheres
-                            });
-                    if (! result) {
-                        resolve(404);
-                    }
-                    resolve({
-                        id: result.id,
-                        name: result.name,
-                        email: result.email
-                    });
-                } catch (e) {
-                    reject(e);
+            if (! id && ! name && ! email) {
+                reject(400);
+            }
+            try {   
+                const result = 
+                    await model.findOne({
+                            attributes: ['id', 'name', 'email'],
+                            where: wheres
+                        });
+                if (! result) {
+                    return resolve(404);
                 }
-            } else {
-                reject("Could not find customer");
+                return resolve({
+                    id: result.id,
+                    name: result.name,
+                    email: result.email
+                });
+            } catch (e) {
+                return reject(e);
             }
         });
     },
@@ -47,7 +46,7 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
                 const result = await model.create({name: name, email: email});
-                resolve({
+                return resolve({
                     id: result.id,
                     name: result.name,
                     email: result.email
@@ -73,7 +72,7 @@ module.exports = {
                         });
                     }
                 }
-                resolve(404);
+                return resolve(404);
             } catch (e) {
                 reject(e);
             }
@@ -85,10 +84,10 @@ module.exports = {
             try {
                 const result = await model.destroy({ where: { id: id } });
                 if (result == 1)
-                    resolve();
-                resolve(404);
+                    return resolve();
+                return resolve(404);
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
         });
     }

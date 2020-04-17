@@ -4,8 +4,6 @@ const Dietician = require('../models/dietician');
 const Role = require('../models/role');
 const bcrypt = require('bcrypt');
 
-
-
 const get = ({id, username}) => {
     return new Promise(async (resolve, reject) => {
         const wheres = generateWheres({id, username});
@@ -15,9 +13,9 @@ const get = ({id, username}) => {
                 where: wheres,
                 include: includes
             });
-            resolve(user);
+            return resolve(user);
         } catch (error) {
-            reject(error);
+            return reject(error);
         }
     });
 };
@@ -35,14 +33,14 @@ const create = ({username, password, dieticianId, roleId}) => {
                     dieticianId: dieticianId, 
                     roleId: roleId
                 });
-            resolve({
+            return resolve({
                 id: user.id,
                 username: user.username,
                 dieticianId: dieticianId, 
                 roleId: roleId
             });
         } catch (error) {
-            reject(error);
+            return reject(error);
         }
     });
 };
@@ -60,9 +58,9 @@ const update = ({id, username, password}) => {
                 { where: { id: id } });
             if (result == 1)
                 return resolve(await get({id: id, username: null}));
-            resolve(404);
+            return resolve(404);
         } catch (error) {
-            reject(error);
+            return reject(error);
         }
     });
 };
@@ -74,7 +72,7 @@ const deleteUser = (id) => {
                 await User.destroy({ where: { id: id } });
                 if (result == 1)
                     return resolve();
-                resolve(404);
+                return resolve(404);
         } catch (error) {
             reject(error);
         }

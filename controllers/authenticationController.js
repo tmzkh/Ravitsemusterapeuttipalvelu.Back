@@ -17,7 +17,9 @@ module.exports = {
                 });
 
                 if (user && user.password) {
+                    // check if password matches
                     if ( ! await bcrypt.compare(password, user.password) ) {
+                        // if not,set user to null
                         user = null;
                     }
                 } else {
@@ -35,7 +37,7 @@ module.exports = {
                     });
 
                 if (! login && user) {
-                    // if not previous login-object, create it
+                    // if there is not previous login-object, create it
                     login = await LoginController.create(userId);
                 } else if (login && user) {
                     // if there is previous login, update it
@@ -55,7 +57,7 @@ module.exports = {
                         dieticianId: user.dieticianId
                     });
                 }
-                return reject(401);
+                return resolve(401);
             } catch (error) {
                 reject(error);
             }

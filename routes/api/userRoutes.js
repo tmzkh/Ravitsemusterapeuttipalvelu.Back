@@ -10,8 +10,6 @@ const validateRegistrationRequest = require('../../helpers/validateRegistrationR
 
 router.route('/')
     .post(async (req, res) => {
-        res.setHeader('Content-Type', 'application/json');
-
         // validate request (kind of pre-validation, only checks if required fields are there)
         const { isValid, errors } = validateRegistrationRequest(req.body);
 
@@ -47,10 +45,8 @@ router.route('/')
             }
 
             if (! req.body.password) {
-                return res.status(400)
-                    .send(
-                        JSON.stringify({errors: { password: "Password is required" }})
-                    );
+                const errors = { password: "Password is required" };
+                return res.status(400).send(JSON.stringify({errors: errors}));
             }
 
             try {

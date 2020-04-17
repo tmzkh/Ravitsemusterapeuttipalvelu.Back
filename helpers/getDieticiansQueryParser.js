@@ -6,8 +6,6 @@ const GetDieticiansQueryParser = (query) => {
 
         const searchQuery = query.query ? query.query : "";
 
-        console.log(query);
-
         const showPending = query.isPending ? true : false;
 
         if (typeof searchQuery != 'string')

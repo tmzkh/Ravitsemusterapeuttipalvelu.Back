@@ -3,7 +3,6 @@ const expertiseController = require('../../controllers/expertiseController');
 
 router.route('/')
     .get(async (req, res) => {
-        res.setHeader('Content-Type', 'application/json');
         expertiseController.getAll()
         .then((result) => {
             res.send(JSON.stringify(result));

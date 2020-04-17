@@ -23,10 +23,11 @@ module.exports = {
             const token = require('crypto')
                 .randomBytes(48).toString('hex');
             try {
-                const result = await Login.create({userId: userId, accessToken: token});
-                resolve(result);
+                const result = 
+                    await Login.create({userId: userId, accessToken: token});
+                return resolve(result);
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
         });
     },
@@ -44,7 +45,7 @@ module.exports = {
                     return resolve(newToken);
                 return reject();
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
         });
     },
@@ -60,7 +61,7 @@ module.exports = {
                 
                 return resolve(404);
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
         });
     },
@@ -70,11 +71,11 @@ module.exports = {
             try {
                 const result = await Login.destroy({ where: where });
                 if (result == 1) {
-                    resolve();
+                    return resolve();
                 }
-                reject(404);
+                return reject(404);
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
         });
     }

@@ -13,10 +13,10 @@ module.exports = {
                 if (result > 0){
                     return resolve(200);
                 }
-                resolve(404);
+                return resolve(404);
             } catch (e) {
                 console.log('dieticianExpertiseController clearAll catch', e);
-                reject(e);
+                return reject(e);
             }
         });
     },
@@ -36,7 +36,7 @@ module.exports = {
                 return resolve(200);
             } catch (e) {
                 console.log('dieticianExpertiseController add arr catch', e);
-                reject(e);
+                return reject(e);
             }
         });
     }

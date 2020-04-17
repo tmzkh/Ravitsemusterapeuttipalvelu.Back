@@ -7,19 +7,23 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op
 
 const getOne = async ({ id, name, email, includeIsPending }) => {
+    // define query conditions
     let wheres = {};
     if (id) wheres.id = id;
     if (name) wheres.name = name;
     if (email) wheres.email = email;
 
+    // define attributes that model returns
     let attributes = ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'];
-
     if (includeIsPending) attributes.push('isPending');
                 
-    return new Promise((resolve, reject) => {
-        if (id || name || email) {
-            model
-                .findOne({
+    return new Promise(async (resolve, reject) => {
+        if (! id && ! name && ! email) {
+            return reject(400);
+        }
+        try {
+            const result = 
+                await model.findOne({
                     attributes: attributes,
                     include: {
                         model: expertiseModel,
@@ -29,16 +33,12 @@ const getOne = async ({ id, name, email, includeIsPending }) => {
                         }
                     },
                     where: wheres
-                }).then((result) => {
-                    if (!result) {
-                        resolve(404);
-                    } else {
-                        resolve(result);
-                    }
-                }).catch((err) => {
-                    reject(err);
                 });
-        } else {
+            if (!result) {
+                return resolve(404);
+            }
+            return resolve(result);
+        } catch (err) {
             reject(err);
         }
     });
@@ -76,38 +76,44 @@ module.exports = {
             });
             expertiseWheres = {[Op.or]: idWheres};
         }
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let dieticianIds = [];
-            // first we must find dietician id:s
-            return model.findAll({
-                where: {
-                    [Op.and]: {
-                        [Op.or]: {
-                            'name': {
-                                [Op.like]: `%${query}%` 
-                            },
-                            'place': {
-                                [Op.like]: `%${query}%` 
+            // first we must find dietician id:s 
+            // (only returns matching expertises, so if dietician has expertises 1, 2 and 3 and query is for expertise 1, will return only array with 1)
+            try {
+                const matchingDieticians = 
+                    await model.findAll({
+                        where: {
+                            [Op.and]: {
+                                [Op.or]: {
+                                    'name': {
+                                        [Op.like]: `%${query}%` 
+                                    },
+                                    'place': {
+                                        [Op.like]: `%${query}%` 
+                                    }
+                                },
+                                isPending: showPending
                             }
                         },
-                        isPending: showPending
-                    }
-                },
-                include: {
-                    model: expertiseModel,
-                    where: expertiseWheres,
-                    required: true
-                },
-            }).each((dietician) => {
-                dieticianIds.push(dietician.id);
-            }).then(() => {
-
+                        attributes: ['id'],
+                        include: {
+                            model: expertiseModel,
+                            where: expertiseWheres,
+                            required: true
+                        },
+                    });
+                matchingDieticians.forEach(dietician => {
+                    dieticianIds.push(dietician.id);
+                });
+                
+                // define attributes that model returns
                 let attributes = ['id', 'name', 'education', 'place', 'email', 'phone', 'imageUrl'];
-
                 if (showPendingValue) attributes.push('isPending');
 
-                // then we can include every expertise
-                return model.findAll({
+                // no we find all and include every expertise
+                const result =
+                    await model.findAll({
                         where: {
                             id: dieticianIds
                         },
@@ -119,12 +125,11 @@ module.exports = {
                                 attributes: []
                             }
                         },
-                    })
-            }).then((result) => {
-                resolve(result);
-            }).catch((err) => {
-                reject(err);
-            });
+                    });
+                return resolve(result);
+            } catch (err) {
+                return reject(err);
+            }
         });
 
     },
@@ -161,12 +166,12 @@ module.exports = {
     update: ({ id, updateObj }) => {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = await model.update(updateObj, {where:{id:id}});
+                const result = await model.update(updateObj, { where:{id:id} });
                 if (result == 1) {
                     const updatedDietician = await getOne({id: id});
                     return resolve(updatedDietician);
                 }
-                resolve(404);
+                return resolve(404);
             } catch (e) {
                 reject(e);
             }

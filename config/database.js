@@ -6,7 +6,7 @@ const Config = require('./config');
 
 const testing = process.env.NODE_ENV == 'test' ? true : false;
 
-module.exports = ({ dbHost, dbName, username, pwd }) => {
+module.exports = () => {
     return new Sequelize(
         testing ? Config.test.database : Config.development.database, 
         testing ? Config.test.username : Config.development.username,

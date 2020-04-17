@@ -4,9 +4,9 @@ module.exports = {
     getAll: () => {
         return new Promise(async (resolve, reject) => {
             try {
-                resolve( await model.findAll() );
+                return resolve( await model.findAll() );
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
         });
     }

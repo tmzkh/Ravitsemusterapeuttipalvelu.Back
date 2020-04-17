@@ -47,18 +47,19 @@ describe('Booking controller', async () => {
 
     describe('delete', () => {
         it('should not delete with wrong id', async () => {
-            try {
-                await bookingController
-                    .delete('cda3b043-d14c-44f3-88c4-31de0508bf56');
-            }
-            catch (err) {
-                return assert.instanceOf(err, Error);
-            }
+            const result = await bookingController
+                .delete({
+                    id: 'cda3b043-d14c-44f3-88c4-31de0508bf56',
+                    dieticianId: 'cda3b043-d14c-44f3-88c4-31de0508bf56'
+                });
+            assert.equal(result, 404);
         });
 
         it('should delete with correct id without problems', async () => {
-            await bookingController
-                .delete(createdBooking.id);
+            await bookingController.delete({
+                id: createdBooking.id,
+                dieticianId: dietId
+            });
         }); 
     });
 
@@ -68,8 +69,7 @@ describe('Booking controller', async () => {
 });
 
 const generateDummyDataForTests = async () => {
-    const dietician = 
-    await dieticianModel.create({
+    const dietician = await dieticianModel.create({
         name: 'dietician name', 
         education: 'asdf',
         place: 'asdf',

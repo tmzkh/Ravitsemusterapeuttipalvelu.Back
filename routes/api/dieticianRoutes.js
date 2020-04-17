@@ -9,17 +9,13 @@ router.use(AuthenticationMiddleware);
 
 router.route('/')   
     .get(async (req, res) => {
-        res.setHeader('Content-Type', 'application/json');
-
         // get authentication object from request (inserted in authentication middleware)
         const auth = req.authentication;
 
         if (! req.query.expertises && ! req.query.query && ! req.query.isPending) {
             return res.send(400);
         } else {
-
-            // const auth = req.authentication;
-
+            // parse query
             const { 
                 error, 
                 searchQuery, 
@@ -27,31 +23,34 @@ router.route('/')
                 showPending
             } = getDieticiansQueryParser(req.query);
 
+            // if parser returns errors, send them to front end
             if (error)
                 return res.status(400)
-                    .send(JSON.stringify({errors: { error }}));
+                    .send(JSON.stringify({ errors: { error } }));
 
-            dieticianController
-                .getFiltered({
-                    query: searchQuery,
-                    expertiseIds: expertiseIds,
-                    showPending: (auth && auth.role == 'admin') ? (true && showPending) : false,
-                    showPendingValue: (auth && auth.role == 'admin') ? true : false
-                }).then((result) => {
-                    res.send(JSON.stringify(result));
-                }).catch((err) => {
-                    res.send(JSON.stringify(err));
-                });
+            try {
+                // fetch array of dieticians with filters
+                const result = 
+                    await dieticianController.getFiltered({
+                        query: searchQuery,
+                        expertiseIds: expertiseIds,
+                        showPending: (auth && auth.role == 'admin') ? (true && showPending) : false,
+                        showPendingValue: (auth && auth.role == 'admin') ? true : false
+                    });
+                return res.send(JSON.stringify(result));
+            } catch (err) {
+                return res.sendStatus(500);
+            }
         }
     });
 
 router.route('/:id')
     .get(async (req, res) => {
-        res.setHeader('Content-Type', 'application/json');
-
         const auth = req.authentication;
+
         let includeIsPending = false;
 
+        // admin and dietician itself get to know if status is pending
         if (auth && auth.role) {
             if (auth.role == 'admin') {
                 includeIsPending = true;
@@ -60,30 +59,26 @@ router.route('/:id')
             }
         }
 
-        dieticianController
-            .getOne({
-                id: req.params.id,
-                includeIsPending: includeIsPending
-            })
-            .then((result) => {
-                if (result === 404) {
-                    return res.sendStatus(404);
-                }
-                res.status(200)
-                    .send(JSON.stringify(result));
-            }).catch((err) => {
-                //console.error(err);
-                res.status(500)
-                    .send();
-            });
+        try {
+            const result = 
+                await dieticianController.getOne({
+                    id: req.params.id,
+                    includeIsPending: includeIsPending
+                });
+            if (result === 404) {
+                return res.sendStatus(404);
+            }
+            res.status(200)
+                .send(JSON.stringify(result));
+        } catch (error) {
+            return res.sendStatus(500);
+        }
     })
     .put(async (req, res) => {
-
-        res.setHeader('Content-Type', 'application/json');
-
         // get authentication object from request (inserted in authentication middleware)
         const auth = req.authentication;
 
+        // if there are no auth object (no accesstoken passed)
         if (! auth || ! auth.role) {
             return res.sendStatus(401);
         }
@@ -91,9 +86,11 @@ router.route('/:id')
         // move id to body object
         req.body.id = req.params.id;
 
-        let { error, updateObj } = updateRequestFormatter({ auth: auth, body: req.body });
-        let expertises;
+        // parse request body, and extract object for updating
+        let { error, updateObj } 
+            = updateRequestFormatter({ auth: auth, body: req.body });
 
+        // if parser returns error, return errors
         if (error) {
             if (error == 'unauthorized') {
                 return res.sendStatus(401);
@@ -102,6 +99,8 @@ router.route('/:id')
             }
         }
 
+        // extract expertises array from update object and delete property
+        let expertises;
         if (updateObj.expertises) {
             expertises = updateObj.expertises;
             delete updateObj.expertises;
@@ -115,6 +114,7 @@ router.route('/:id')
                     updateObj: updateObj
                 });
 
+            // if result is 404, there is no dietician with given id and return 404
             if (result === 404) {
                 return res.sendStatus(404);
             }
@@ -139,7 +139,7 @@ router.route('/:id')
                 result = await dieticianController.getOne({id: req.params.id});
             }
 
-            res.status(200).send(JSON.stringify(result));
+            return res.status(200).send(JSON.stringify(result));
         } catch (err) {
             let errorObj = {};
             if (err.name && (err.name === 'SequelizeValidationError' || 
@@ -150,29 +150,25 @@ router.route('/:id')
                 return res.status(400)
                         .send(JSON.stringify({errors: errorObj}));
             }
-            res.status(500).send();
+            return res.sendStatus(500);
         }
     })
     .delete(async (req, res) => {
-        res.setHeader('Content-Type', 'application/json');
-
         const auth = req.authentication;
-
+        // only admin or dietician itself can ask deleting
         if (auth && (auth.role == 'admin' || auth.dieticianId == req.params.id)) {
-            dieticianController
-            .delete(req.params.id)
-            .then((result) => {
+            try {
+                const result = await dieticianController.delete(req.params.id);
                 if (result === 404) {
                     return res.sendStatus(404);
                 }
-                res.status(204).send("deleted");
-            }).catch((err) => {
-                return res.status(400).send();
-            });
+                return res.sendStatus(204);
+            } catch (err) {
+                return res.sendStatus(400);
+            }
         }
-
+        // if there are no auth object (no accesstoken passed)
         return res.sendStatus(401);
-
     });
 
 module.exports = router;

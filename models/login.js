@@ -4,12 +4,7 @@ const User = require('./user');
 
 // config dotenv
 require('dotenv').config();
-const db = require('../config/database')({
-        dbHost: process.env.DB_HOST, 
-        dbName: process.env.DB_NAME, 
-        username: process.env.DB_USERNAME, 
-        pwd:process.env.DB_PWD
-    });
+const db = require('../config/database')();
 
 const Login = db.define('logins', {
     id: {

@@ -168,7 +168,7 @@ module.exports = {
             try {
                 const result = await model.update(updateObj, { where:{id:id} });
                 if (result == 1) {
-                    const updatedDietician = await getOne({id: id});
+                    const updatedDietician = await getOne({id: id, includeIsPending: true});
                     return resolve(updatedDietician);
                 }
                 return resolve(404);

@@ -14,11 +14,11 @@ module.exports = {
     return queryInterface.bulkInsert('users', 
     [
       {
-        id: knownEntities.user2.id,
-        username: knownEntities.user2.username,
-        password: pwd2,
-        roleId: knownEntities.user2.roleId,
-        dieticianId: knownEntities.user2.dieticianId,
+        id: knownEntities.user1.id,
+        username: knownEntities.user1.username,
+        password: pwd1,
+        roleId: knownEntities.user1.roleId,
+        dieticianId: knownEntities.user1.dieticianId,
       }
     ], {});
   },

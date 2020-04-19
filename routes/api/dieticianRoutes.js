@@ -13,7 +13,7 @@ router.route('/')
         const auth = req.authentication;
 
         if (! req.query.expertises && ! req.query.query && ! req.query.isPending) {
-            return res.send(400);
+            return res.sendStatus(400);
         } else {
             // parse query
             const { 

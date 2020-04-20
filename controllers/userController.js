@@ -25,7 +25,6 @@ const create = ({username, password, dieticianId, roleId}) => {
     password = bcrypt.hashSync(password, salt);
     return new Promise(async (resolve, reject) =>{
         try {
-            //console.log(username, password, dieticianId, roleId);
             const user = 
                 await User.create({
                     username: username, 

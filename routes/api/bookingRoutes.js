@@ -83,7 +83,6 @@ router.route('/')
                 await bookingController.create(req.body);
             return res.status(201).send(JSON.stringify(result));
         } catch (err) {
-            //console.log(err);
             if (err.name && (err.name === 'SequelizeValidationError' || 
                 err.name === 'SequelizeUniqueConstraintError')) {
                 let errorObj = {};

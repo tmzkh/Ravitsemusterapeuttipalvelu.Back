@@ -7,7 +7,6 @@ describe('expertise controller', () => {
     describe('get all', async () => {
         it('should fetch all without errors', async () => {
             exs = await expertiseController.getAll();
-            //console.log(exs);
         });
 
         it('results should not be null or length 0', () => {   

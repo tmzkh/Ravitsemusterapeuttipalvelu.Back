@@ -23,7 +23,6 @@ module.exports = (query) => {
     } else {
         let datestr = query.endDate + ' 23:59';
         let sd = moment.utc(datestr, 'YYYY-MM-DD HH:mm', true).format('YYYY-MM-DD HH:mm');
-        console.log(datestr, sd);
         if (sd == 'Invalid date') {
             dateErrors.endDate = "Invalid date formatting. Must be 'YYYY-MM-DD'";
             datesAreValid = false;

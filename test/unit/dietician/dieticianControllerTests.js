@@ -46,8 +46,6 @@ describe('Dietician controller', () => {
                 });
         });
 
-        console.log('tests ', createdDietician);
-
         it('name and email should match', () => {
             assert.equal(createdDietician.name, name, "name does not match");
             assert.equal(createdDietician.email, email, "email does not match");

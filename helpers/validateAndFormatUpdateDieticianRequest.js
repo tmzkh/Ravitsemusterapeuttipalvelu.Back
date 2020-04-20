@@ -5,8 +5,6 @@ module.exports = ({ body, auth }) => {
     let updateObj = {};
 
     if (auth.role == 'admin') {
-        console.log(body, );
-        
         if (body.isPending != 'undefined' && (body.isPending == true || body.isPending == false)) {
             updateObj.isPending = body.isPending;
         } else {
@@ -20,7 +18,6 @@ module.exports = ({ body, auth }) => {
         if (body.phone) updateObj.phone = body.phone;
         if (body.imageUrl) updateObj.imageUrl = body.imageUrl;
         if (body.expertises) {
-            console.log("validator, body.exarr", body.expertises);
             const { 
                 error, 
                 expertises 

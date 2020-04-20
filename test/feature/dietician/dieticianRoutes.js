@@ -1,4 +1,3 @@
-process.env.NODE_ENV = 'test'
 
 const chai = require('chai');
 
@@ -22,8 +21,6 @@ const bcrypt = require('bcrypt');
 const salt = bcrypt.genSaltSync(10);
 const pwd = 'salasana';
 const hashedPwd = bcrypt.hashSync(pwd, salt);
-
-process.env.NODE_ENV = 'test';
 
 let dietician1;
 let dietician2;
@@ -170,36 +167,45 @@ describe('GET /dieticians', async () => {
     });
 
     it('admin should be able to modify isPending value for dietician', async () => {
-
-        const res = await chai.request(server)
-            .get('/api/dieticians/' + dietician3.id)
-            .set({'content-type': 'application/json', 'accesstoken': login2.accessToken})
-            .send();
-
-        assert.equal(res.status, 200);
-        assert.isObject(res.body);
-        assert.equal(res.body.isPending, true);
-
-        const res2 = await chai.request(server)
+        const res1 = await chai.request(server)
             .put('/api/dieticians/' + dietician3.id)
             .set({'content-type': 'application/json', 'accesstoken': login2.accessToken})
             .send({isPending: false});
 
-        console.log('res2', res2.body);
+        assert.equal(res1.status, 200);
+        assert.equal(res1.body.name, dietician3.name);
+        assert.equal(res1.body.isPending, false);
 
-        assert.equal(res2.status, 200);
-        assert.equal(res2.body.name, dietician3.name);
-        assert.equal(res2.body.isPending, false);
-
-        const res3 = await chai.request(server)
+        const res2 = await chai.request(server)
             .put('/api/dieticians/' + dietician3.id)
             .set({'content-type': 'application/json', 'accesstoken': login2.accessToken})
             .send({isPending: true});
 
-        assert.equal(res3.status, 200);
-        assert.equal(res3.body.name, dietician3.name);
-        assert.equal(res3.body.isPending, true);
+        assert.equal(res2.status, 200);
+        assert.equal(res2.body.name, dietician3.name);
+        assert.equal(res2.body.isPending, true);
+    });
 
+    it('dietician should be able to modify own profile', async () => {
+        const res1 = await chai.request(server)
+            .put('/api/dieticians/' + dietician1.id)
+            .set({'content-type': 'application/json', 'accesstoken': login1.accessToken})
+            .send({
+                education: 'KTM',
+                place: 'Hesa'
+            });
+
+        assert.equal(res1.status, 200);
+        assert.notEqual(res1.body.place, dietician1.place);
+        assert.notEqual(res1.body.education, dietician1.education);
+
+        const res2 = await chai.request(server)
+            .get('/api/dieticians/' + dietician1.id)
+            .send();
+
+        assert.equal(res2.status, 200);
+        assert.notEqual(res2.body.place, dietician1.place);
+        assert.notEqual(res2.body.education, dietician1.education);
     });
 
 });
